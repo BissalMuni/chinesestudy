@@ -21,57 +21,39 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
   const playAudio = async (event: React.MouseEvent) => {
     event.stopPropagation(); // 부모 클릭 이벤트 방지
     
-    // Google Translate TTS API 사용
-    const text = encodeURIComponent(sentence.sentence);
-    const lang = 'zh-CN'; // 중국어 간체
-    
-    // Google Translate TTS URL
-    const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${text}&tl=${lang}&client=tw-ob`;
+    const text = sentence.sentence;
     
     try {
-      // 먼저 로컬 MP3 파일 확인
-      // const localUrl = `/audio/sentence_${sentence.id}.mp3`;
-      // const localResponse = await fetch(localUrl, { method: 'HEAD' });
+      // 1. ResponsiveVoice API 시도 (네이버 앱 브라우저 지원)
+      if ((window as any).responsiveVoice) {
+        (window as any).responsiveVoice.speak(text, "Chinese Female", {
+          rate: 0.9,
+          pitch: 1,
+          volume: 1
+        });
+        return;
+      }
       
-      let audioUrl = googleTTSUrl; // 기본값: Google TTS
-      
-      // if (localResponse.ok) {
-        // 로컬 파일이 있으면 로컬 파일 사용
-        // audioUrl = localUrl;
-      // }
-      
-      const audio = new Audio(audioUrl);
-      
-      // 오디오 재생
-      await audio.play().catch(async (playError) => {
-        // Google TTS가 실패하면 대체 방법 시도
-        if (audioUrl === googleTTSUrl) {
-          // 브라우저 Web Speech API 사용 (지원하는 경우)
-          if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(sentence.sentence);
-            utterance.lang = 'zh-CN';
-            utterance.rate = 0.9; // 속도 조절
-            window.speechSynthesis.speak(utterance);
-          } else {
-            alert('음성 재생이 지원되지 않습니다.');
-          }
-        } else {
-          throw playError;
-        }
-      });
-      
-    } catch (error) {
-      console.error('Audio playback error:', error);
-      
-      // 최후의 수단: Web Speech API
+      // 2. Web Speech API 시도
       if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(sentence.sentence);
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'zh-CN';
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
-      } else {
-        alert('음성 재생에 실패했습니다.');
+        return;
       }
+      
+      // 3. 모든 방법이 실패하면 Google Translate 페이지로 이동
+      const googleTranslateUrl = `https://translate.google.com/?sl=zh-CN&tl=ko&text=${encodeURIComponent(text)}&op=translate`;
+      
+      // 새 창으로 열기 (사용자가 직접 스피커 버튼 클릭 가능)
+      if (confirm('음성 재생이 지원되지 않습니다. Google 번역 페이지로 이동하시겠습니까?')) {
+        window.open(googleTranslateUrl, '_blank');
+      }
+      
+    } catch (error) {
+      console.error('Audio playback error:', error);
+      alert('음성 재생에 실패했습니다. 브라우저를 Chrome이나 Safari로 변경해보세요.');
     }
   };
 
