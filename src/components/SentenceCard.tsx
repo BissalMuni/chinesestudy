@@ -47,13 +47,15 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
       const googleTranslateUrl = `https://translate.google.com/?sl=zh-CN&tl=ko&text=${encodeURIComponent(text)}&op=translate`;
       
       // 새 창으로 열기 (사용자가 직접 스피커 버튼 클릭 가능)
-      if (confirm('음성 재생이 지원되지 않습니다. Google 번역 페이지로 이동하시겠습니까?')) {
-        window.open(googleTranslateUrl, '_blank');
+      const userConfirmed = (window as any).confirm('음성 재생이 지원되지 않습니다. Google 번역 페이지로 이동하시겠습니까?');
+      if (userConfirmed) {
+        (window as any).open(googleTranslateUrl, '_blank');
       }
       
     } catch (error) {
       console.error('Audio playback error:', error);
-      alert('음성 재생에 실패했습니다. 브라우저를 Chrome이나 Safari로 변경해보세요.');
+      // alert 대신 console.error 사용 (또는 사용자 정의 알림 컴포넌트)
+      console.error('음성 재생에 실패했습니다. 브라우저를 Chrome이나 Safari로 변경해보세요.');
     }
   };
 
