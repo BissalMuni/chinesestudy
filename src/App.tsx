@@ -102,12 +102,6 @@ const App: React.FC = () => {
     }
   };
 
-  // 날짜 포맷팅
-  const formatDateDisplay = () => {
-    if (!selectedDate) return '';
-    const [year, month, day] = selectedDate.split('-');
-    return `${year}년 ${month}월 ${day}일`;
-  };
 
   // 다크 모드 토글
   const toggleDarkMode = () => {
@@ -140,8 +134,9 @@ const App: React.FC = () => {
     <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="app-header">
         <div className="header-title">
-          <h1>진차이린 중국어 공부</h1>
+          <h1>진차이린 중국어</h1>
           <button 
+            type="button"
             className="theme-toggle" 
             onClick={toggleDarkMode}
             title={isDarkMode ? "라이트 모드로 변경" : "다크 모드로 변경"}

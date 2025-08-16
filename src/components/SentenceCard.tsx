@@ -46,6 +46,7 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
           {sentence.sentence}
         </div>
         <button 
+          type="button"
           className="audio-button" 
           onClick={playAudio}
           title="음성 재생"
