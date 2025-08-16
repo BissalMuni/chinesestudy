@@ -21,20 +21,57 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
   const playAudio = async (event: React.MouseEvent) => {
     event.stopPropagation(); // 부모 클릭 이벤트 방지
     
-    const audioUrl = `/audio/sentence_${sentence.id}.mp3`;
+    // Google Translate TTS API 사용
+    const text = encodeURIComponent(sentence.sentence);
+    const lang = 'zh-CN'; // 중국어 간체
+    
+    // Google Translate TTS URL
+    const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${text}&tl=${lang}&client=tw-ob`;
     
     try {
+      // 먼저 로컬 MP3 파일 확인
+      // const localUrl = `/audio/sentence_${sentence.id}.mp3`;
+      // const localResponse = await fetch(localUrl, { method: 'HEAD' });
+      
+      let audioUrl = googleTTSUrl; // 기본값: Google TTS
+      
+      // if (localResponse.ok) {
+        // 로컬 파일이 있으면 로컬 파일 사용
+        // audioUrl = localUrl;
+      // }
+      
       const audio = new Audio(audioUrl);
       
-      // 파일 존재 여부 확인
-      const response = await fetch(audioUrl, { method: 'HEAD' });
-      if (!response.ok) {
-        throw new Error('File not found');
-      }
+      // 오디오 재생
+      await audio.play().catch(async (playError) => {
+        // Google TTS가 실패하면 대체 방법 시도
+        if (audioUrl === googleTTSUrl) {
+          // 브라우저 Web Speech API 사용 (지원하는 경우)
+          if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(sentence.sentence);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.9; // 속도 조절
+            window.speechSynthesis.speak(utterance);
+          } else {
+            alert('음성 재생이 지원되지 않습니다.');
+          }
+        } else {
+          throw playError;
+        }
+      });
       
-      await audio.play();
     } catch (error) {
-      alert('MP3 파일이 없습니다.');
+      console.error('Audio playback error:', error);
+      
+      // 최후의 수단: Web Speech API
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(sentence.sentence);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert('음성 재생에 실패했습니다.');
+      }
     }
   };
 
