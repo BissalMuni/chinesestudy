@@ -47,7 +47,7 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
       const googleTranslateUrl = `https://translate.google.com/?sl=zh-CN&tl=ko&text=${encodeURIComponent(text)}&op=translate`;
       
       // 새 창으로 열기 (사용자가 직접 스피커 버튼 클릭 가능)
-      const userConfirmed = (window as any).confirm('음성 재생이 지원되지 않습니다. Google 번역 페이지로 이동하시겠습니까?');
+      const userConfirmed = (window as any).confirm('Chrome이나 Safari, EDGE에서 접속하세요. 다른 브라우저에서는 음성 재생이 지원되지 않습니다. Google 번역 페이지로 이동하여 음성을 재생하시겠습니까?');
       if (userConfirmed) {
         (window as any).open(googleTranslateUrl, '_blank');
       }
