@@ -350,7 +350,10 @@ body {
   background: #f0f0f0;
   border-radius: 8px;
   transition: background 0.3s ease;
-  user-select: none;
+  -webkit-user-select: none; /* Safari 지원 */
+  -moz-user-select: none;    /* Firefox 지원 */
+  -ms-user-select: none;     /* IE/Edge 지원 */
+  user-select: none;         /* 표준 */
 }
 
 .words-toggle:hover {
