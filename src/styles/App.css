@@ -1,0 +1,472 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* Dark Mode Styles */
+.app.dark-mode body,
+.app.dark-mode {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.app.dark-mode .navigation {
+  background: #34495e;
+  color: white;
+}
+
+.app.dark-mode .month-selector select {
+  background: #2c3e50;
+  color: white;
+  border-color: #667eea;
+}
+
+.app.dark-mode .date-tab {
+  background: #2c3e50;
+  color: white;
+  border-color: #546e7a;
+}
+
+.app.dark-mode .date-tab:hover {
+  background: #455a64;
+}
+
+.app.dark-mode .sentence-card {
+  background: #2c3e50;
+  color: white;
+}
+
+.app.dark-mode .chinese-sentence {
+  color: #ecf0f1;
+}
+
+.app.dark-mode .pinyin {
+  color: #bdc3c7;
+}
+
+.app.dark-mode .meanings {
+  background: #34495e;
+}
+
+.app.dark-mode .meaning-text {
+  color: #ecf0f1;
+}
+
+.app.dark-mode .words-toggle {
+  background: #34495e;
+}
+
+.app.dark-mode .words-toggle:hover {
+  background: #455a64;
+}
+
+.app.dark-mode .words-title {
+  color: #ecf0f1;
+}
+
+.app.dark-mode .sentence-number {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.app.dark-mode .word-card {
+  background: #34495e;
+  border-left-color: #667eea;
+}
+
+.app.dark-mode .word-chinese {
+  color: #ecf0f1;
+}
+
+.app.dark-mode .word-meaning {
+  color: #bdc3c7;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 10px;
+}
+
+.app-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.theme-toggle {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.date-info {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Navigation Styles */
+.navigation {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.month-selector {
+  margin-bottom: 15px;
+}
+
+.month-selector label {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.month-selector select {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 2px solid #667eea;
+  background: white;
+  color: #2c3e50;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.month-selector select:hover {
+  background: #f8f9fa;
+}
+
+.month-selector select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.date-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-tab {
+  padding: 10px 20px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.date-tab:hover {
+  background: #f8f9fa;
+  border-color: #667eea;
+}
+
+.date-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+}
+
+/* Content Styles */
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sentences-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Sentence Card Styles */
+.sentence-card {
+  background: white;
+  border-radius: 15px;
+  padding: 5px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sentence-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.sentence-number {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.chinese-sentence-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.chinese-sentence {
+  font-size: 2rem;
+  color: #2c3e50;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+  flex: 1;
+}
+
+.chinese-sentence:hover {
+  color: #667eea;
+}
+
+.audio-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.audio-button:hover {
+  background: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.audio-button:active {
+  transform: scale(0.95);
+}
+
+.sentence-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.sentence-details.expanded {
+  max-height: 2000px;
+}
+
+.pinyin {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.meanings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.meaning-item {
+  padding: 10px;
+}
+
+.meaning-label {
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.meaning-text {
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+/* Words Section Styles */
+.words-section {
+  margin-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+}
+
+.words-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  user-select: none;
+}
+
+.words-toggle:hover {
+  background: #e8e8e8;
+}
+
+.words-title {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: bold;
+  margin: 0;
+}
+
+.toggle-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.toggle-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.words-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.words-content.expanded {
+  max-height: 2000px;
+  margin-top: 15px;
+}
+
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+/* Word Card Styles */
+.word-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+  border-left: 4px solid #667eea;
+}
+
+.word-chinese {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.word-pinyin {
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.word-meaning {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 3px;
+}
+
+.word-type {
+  display: inline-block;
+  background: #e3e4e6;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: #667eea;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* Loading and Error Styles */
+.loading {
+  text-align: center;
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 50px;
+}
+
+.error {
+  background: #ff6b6b;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.error h2 {
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .meanings {
+    grid-template-columns: 1fr;
+  }
+  
+  .chinese-sentence {
+    font-size: 1.5rem;
+  }
+  
+  .app-header h1 {
+    font-size: 2rem;
+  }
+  
+  .words-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .date-tabs {
+    justify-content: center;
+  }
+}
