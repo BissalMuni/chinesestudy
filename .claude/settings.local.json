@@ -4,7 +4,8 @@
       "Bash(mkdir:*)",
       "Bash(npm install)",
       "WebFetch(domain:github.com)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm start)"
     ],
     "defaultMode": "acceptEdits"
   }

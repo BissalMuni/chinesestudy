@@ -8,9 +8,15 @@ const App: React.FC = () => {
   const [availableFiles, setAvailableFiles] = useState<string[]>([]);
   const [pastMonths, setPastMonths] = useState<string[]>([]);
   const [presentMonths, setPresentMonths] = useState<string[]>([]);
-  const [selectedMonth, setSelectedMonth] = useState<string>('2025-08');
-  const [selectedDate, setSelectedDate] = useState<string>('2025-08-07');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    return localStorage.getItem('selectedMonth') || '2025-08';
+  });
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    return localStorage.getItem('selectedDate') || '2025-08-07';
+  });
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    return localStorage.getItem('selectedCategory') || '';
+  });
   const [selectedSubcategory] = useState<string>(''); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [lastSelectedFolder, setLastSelectedFolder] = useState<string>(() => {
     return localStorage.getItem('lastSelectedFolder') || '';
@@ -27,7 +33,10 @@ const App: React.FC = () => {
     const saved = localStorage.getItem('isDarkMode');
     return saved ? JSON.parse(saved) : false;
   });
-  const [isDateBased, setIsDateBased] = useState<boolean>(false);
+  const [isDateBased, setIsDateBased] = useState<boolean>(() => {
+    const saved = localStorage.getItem('isDateBased');
+    return saved ? JSON.parse(saved) : false;
+  });
 
   // 폴더에서 데이터 로드하는 공통 함수
   const loadDataFromFolder = useCallback(async (folder: 'past' | 'present', month: string) => {
@@ -56,6 +65,7 @@ const App: React.FC = () => {
       const firstContent = data.contents[0];
       if (isDateBasedContent(firstContent)) {
         setIsDateBased(true);
+        localStorage.setItem('isDateBased', JSON.stringify(true));
         setSentences(firstContent.sentences);
         const actualDates = data.contents
           .filter(isDateBasedContent)
@@ -63,11 +73,18 @@ const App: React.FC = () => {
         setAvailableFiles(actualDates);
         if (actualDates.length > 0) {
           setSelectedMonth(month);
-          setSelectedDate(actualDates[0]);
+          localStorage.setItem('selectedMonth', month);
+          const savedDate = localStorage.getItem('selectedDate');
+          const dateToSelect = savedDate && actualDates.includes(savedDate) ? savedDate : actualDates[0];
+          setSelectedDate(dateToSelect);
+          localStorage.setItem('selectedDate', dateToSelect);
         }
       } else if (isCategoryContent(firstContent)) {
         setIsDateBased(false);
-        setSelectedCategory('전체');
+        localStorage.setItem('isDateBased', JSON.stringify(false));
+        const savedCategory = localStorage.getItem('selectedCategory') || '전체';
+        setSelectedCategory(savedCategory);
+        localStorage.setItem('selectedCategory', savedCategory);
         // createContentSections will be called in a separate useEffect
       }
     } catch (err) {
@@ -195,10 +212,41 @@ const App: React.FC = () => {
     loadAllMonths();
   }, []);
 
-  // 카테고리 기반 데이터일 때 기본 컨텐츠 섹션 설정
+  // 페이지 로드 시 저장된 상태 복원
   useEffect(() => {
-    if (sentenceData && !isDateBased && selectedCategory === '전체') {
-      const sections = createContentSections('전체');
+    const loadSavedState = async () => {
+      const savedFolder = localStorage.getItem('lastSelectedFolder');
+      const savedMonth = localStorage.getItem('lastSelectedMonth');
+      
+      if (savedFolder && savedMonth && (savedFolder === 'past' || savedFolder === 'present')) {
+        try {
+          console.log('Restoring saved state:', savedFolder, savedMonth);
+          await loadDataFromFolder(savedFolder, savedMonth);
+        } catch (error) {
+          console.error('Error restoring saved state:', error);
+        }
+      }
+    };
+    
+    loadSavedState();
+  }, [loadDataFromFolder]);
+
+  // 날짜 기반 데이터일 때 저장된 날짜로 복원
+  useEffect(() => {
+    if (sentenceData && isDateBased && selectedDate) {
+      const selectedDateData = sentenceData.contents
+        .filter(isDateBasedContent)
+        .find(content => content.date === selectedDate);
+      if (selectedDateData) {
+        setSentences(selectedDateData.sentences);
+      }
+    }
+  }, [sentenceData, isDateBased, selectedDate]);
+
+  // 카테고리 기반 데이터일 때 컨텐츠 섹션 설정
+  useEffect(() => {
+    if (sentenceData && !isDateBased && selectedCategory) {
+      const sections = createContentSections(selectedCategory);
       setContentSections(sections);
       
       const sentencesOnly = sections
@@ -214,11 +262,13 @@ const App: React.FC = () => {
   const handleMonthChange = (month: string) => {
     console.log('Month changed to:', month);
     setSelectedMonth(month);
+    localStorage.setItem('selectedMonth', month);
     
     // 해당 월의 첫 번째 날짜 선택
     const monthDates = availableFiles.filter(date => date.startsWith(month));
     if (monthDates.length > 0) {
       setSelectedDate(monthDates[0]);
+      localStorage.setItem('selectedDate', monthDates[0]);
       // 여기서 새로운 데이터를 로드해야 함 (현재는 2025-08만 있음)
     }
   };
@@ -247,6 +297,7 @@ const App: React.FC = () => {
   const handleCategoryChange = (category: string) => {
     console.log('Category changed to:', category);
     setSelectedCategory(category);
+    localStorage.setItem('selectedCategory', category);
     
     // 컨텐츠 섹션 생성 (서브카테고리 구분선 포함)
     const sections = createContentSections(category);
@@ -265,6 +316,7 @@ const App: React.FC = () => {
   const handleDateChange = (date: string) => {
     console.log('Date changed to:', date);
     setSelectedDate(date);
+    localStorage.setItem('selectedDate', date);
     
     // 선택된 날짜에 해당하는 문장 데이터 찾기
     if (sentenceData && sentenceData.contents) {
