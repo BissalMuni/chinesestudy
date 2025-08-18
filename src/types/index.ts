@@ -15,11 +15,42 @@ export interface Sentence {
   words: Word[];
 }
 
+// For date-based structure (old format)
+export interface DateBasedContent {
+  date: string;
+  sentences: Sentence[];
+}
+
+// For category-based structure (new format)
+export interface Subcategory {
+  subcategory: string;
+  sentences: Sentence[];
+}
+
+export interface CategoryContent {
+  category: string;
+  subcategories: Subcategory[];
+}
+
+// Main data structure that supports both formats
 export interface SentenceData {
   month: string;
   language: string;
-  contents: Array<{
-    date: string;
-    sentences: Sentence[];
-  }>;
+  contents: Array<DateBasedContent | CategoryContent>;
+}
+
+// Type guards to check content type
+export function isDateBasedContent(content: DateBasedContent | CategoryContent): content is DateBasedContent {
+  return 'date' in content;
+}
+
+export function isCategoryContent(content: CategoryContent | DateBasedContent): content is CategoryContent {
+  return 'category' in content;
+}
+
+// For organizing content with subcategory dividers
+export interface ContentSection {
+  type: 'divider' | 'sentence';
+  dividerText?: string;
+  sentence?: Sentence;
 }

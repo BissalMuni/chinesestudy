@@ -26,25 +26,42 @@ body {
   color: white;
 }
 
-.app.dark-mode .month-selector select {
+.app.dark-mode .month-selector select,
+.app.dark-mode .past-month-selector select,
+.app.dark-mode .present-month-selector select {
   background: #2c3e50;
   color: white;
   border-color: #667eea;
 }
 
-.app.dark-mode .date-tab {
+.app.dark-mode .date-tab,
+.app.dark-mode .category-tab {
   background: #2c3e50;
   color: white;
   border-color: #546e7a;
 }
 
-.app.dark-mode .date-tab:hover {
+.app.dark-mode .date-tab:hover,
+.app.dark-mode .category-tab:hover {
   background: #455a64;
 }
 
 .app.dark-mode .sentence-card {
   background: #2c3e50;
   color: white;
+}
+
+.app.dark-mode .subcategory-divider h3 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.app.dark-mode .subcategory-divider h3:before {
+  border-right-color: #667eea;
+}
+
+.app.dark-mode .subcategory-divider h3:after {
+  border-left-color: #764ba2;
 }
 
 .app.dark-mode .chinese-sentence {
@@ -154,17 +171,45 @@ body {
   margin-right: auto;
 }
 
-.month-selector {
+.selectors-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
   margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
-.month-selector label {
+.month-selector,
+.past-month-selector,
+.present-month-selector {
+  display: flex;
+  align-items: center;
+}
+
+/* Hide labels visually but keep them for accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.month-selector label,
+.past-month-selector label,
+.present-month-selector label {
   margin-right: 10px;
   font-weight: bold;
   color: #2c3e50;
 }
 
-.month-selector select {
+.month-selector select,
+.past-month-selector select,
+.present-month-selector select {
   padding: 8px 15px;
   border-radius: 8px;
   border: 2px solid #667eea;
@@ -173,24 +218,42 @@ body {
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 120px;
 }
 
-.month-selector select:hover {
+.past-month-selector select {
+  border-color: #f093fb;
+}
+
+.present-month-selector select {
+  border-color: #4facfe;
+}
+
+.month-selector select:hover,
+.past-month-selector select:hover,
+.present-month-selector select:hover {
   background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.month-selector select:focus {
+.month-selector select:focus,
+.past-month-selector select:focus,
+.present-month-selector select:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.date-tabs {
+.date-tabs,
+.category-tabs {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
-.date-tab {
+.date-tab,
+.category-tab {
   padding: 10px 20px;
   border: 2px solid #e0e0e0;
   background: white;
@@ -201,15 +264,32 @@ body {
   color: #2c3e50;
 }
 
-.date-tab:hover {
-  background: #f8f9fa;
-  border-color: #667eea;
+.category-tab {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border-color: transparent;
+  font-weight: bold;
 }
 
-.date-tab.active {
+.category-tab:first-child {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-weight: bolder;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.date-tab:hover,
+.category-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.date-tab.active,
+.category-tab.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 /* Content Styles */
@@ -218,10 +298,61 @@ body {
   margin: 0 auto;
 }
 
+.content-container,
 .sentences-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
+}
+
+/* Subcategory Divider Styles */
+.subcategory-divider {
+  margin: 10px 0 10px 0;
+  text-align: left;
+  position: relative;
+}
+
+.subcategory-divider h3 {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  padding: 12px 30px;
+  margin: 0;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+  position: relative;
+}
+
+.subcategory-divider:first-child {
+  margin-top: 10px;
+}
+
+.subcategory-divider h3:before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 12px solid #4facfe;
+}
+
+.subcategory-divider h3:after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 12px solid #00f2fe;
 }
 
 /* Sentence Card Styles */
@@ -469,7 +600,23 @@ body {
     grid-template-columns: 1fr;
   }
   
-  .date-tabs {
+  .date-tabs,
+  .category-tabs {
     justify-content: center;
+  }
+  
+  .category-tab {
+    font-size: 0.85rem;
+    padding: 8px 15px;
+  }
+  
+  .subcategory-divider h3 {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+  
+  .subcategory-divider h3:before,
+  .subcategory-divider h3:after {
+    display: none;
   }
 }
