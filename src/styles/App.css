@@ -298,7 +298,7 @@ body {
 }
 
 .sentence-details.expanded {
-  max-height: 2000px;
+  max-height: none;
 }
 
 .pinyin {
@@ -383,7 +383,7 @@ body {
 }
 
 .words-content.expanded {
-  max-height: 2000px;
+  max-height: none;
   margin-top: 15px;
 }
 
