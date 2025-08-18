@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navigation from './components/Navigation';
 import SentenceCard from './components/SentenceCard';
 import { SentenceData, Sentence, isDateBasedContent, isCategoryContent, ContentSection } from './types';
@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('2025-08');
   const [selectedDate, setSelectedDate] = useState<string>('2025-08-07');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
+  const [selectedSubcategory] = useState<string>(''); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [lastSelectedFolder, setLastSelectedFolder] = useState<string>(() => {
     return localStorage.getItem('lastSelectedFolder') || '';
   });
@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const [sentenceData, setSentenceData] = useState<SentenceData | null>(null);
   const [sentences, setSentences] = useState<Sentence[]>([]);
   const [contentSections, setContentSections] = useState<ContentSection[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('isDarkMode');
@@ -29,104 +29,8 @@ const App: React.FC = () => {
   });
   const [isDateBased, setIsDateBased] = useState<boolean>(false);
 
-  // 과거 및 현재 월 목록 로드
-  useEffect(() => {
-    const loadAllMonths = async () => {
-      try {
-        // 과거 파일 목록 로드
-        const pastManifestResponse = await fetch('/data/past/manifest.json');
-        if (pastManifestResponse.ok) {
-          const pastManifest = await pastManifestResponse.json();
-          const pastFiles = pastManifest.files || [];
-          
-          // 파일명에서 월 정보 추출 (202201.json -> 2022-01)
-          const pastMonths = pastFiles.map((filename: string) => {
-            const match = filename.match(/(\d{4})(\d{2})\.json/);
-            if (match) {
-              return `${match[1]}-${match[2]}`;
-            }
-            return null;
-          }).filter(Boolean);
-          
-          setPastMonths(pastMonths);
-          console.log('Past months loaded:', pastMonths);
-        }
-        
-        // 현재 파일 목록 로드
-        const presentManifestResponse = await fetch('/data/present/manifest.json');
-        if (presentManifestResponse.ok) {
-          const presentManifest = await presentManifestResponse.json();
-          const presentFiles = presentManifest.files || [];
-          
-          // 파일명에서 월 정보 추출 (202508.json -> 2025-08)
-          const presentMonths = presentFiles.map((filename: string) => {
-            const match = filename.match(/(\d{4})(\d{2})\.json/);
-            if (match) {
-              return `${match[1]}-${match[2]}`;
-            }
-            return null;
-          }).filter(Boolean);
-          
-          setPresentMonths(presentMonths);
-          console.log('Present months loaded:', presentMonths);
-        }
-      } catch (err) {
-        console.error('Error loading months:', err);
-      }
-    };
-    loadAllMonths();
-  }, []);
-
-  // 초기 로드 및 localStorage에서 마지막 선택 복원
-  useEffect(() => {
-    const restoreLastSelection = async () => {
-      if (lastSelectedFolder && lastSelectedMonth) {
-        console.log('Restoring last selection:', lastSelectedFolder, lastSelectedMonth);
-        await loadDataFromFolder(lastSelectedFolder as 'past' | 'present', lastSelectedMonth);
-      } else {
-        setLoading(false);
-      }
-    };
-    
-    // 월 목록이 로드된 후에 마지막 선택 복원
-    setTimeout(restoreLastSelection, 100);
-  }, [lastSelectedFolder, lastSelectedMonth]);
-
-  // 월 변경 핸들러
-  const handleMonthChange = (month: string) => {
-    console.log('Month changed to:', month);
-    setSelectedMonth(month);
-    
-    // 해당 월의 첫 번째 날짜 선택
-    const monthDates = availableFiles.filter(date => date.startsWith(month));
-    if (monthDates.length > 0) {
-      setSelectedDate(monthDates[0]);
-      // 여기서 새로운 데이터를 로드해야 함 (현재는 2025-08만 있음)
-    }
-  };
-
-  // 과거 월 선택 핸들러
-  const handlePastMonthChange = async (month: string) => {
-    console.log('Past month selected:', month);
-    localStorage.setItem('lastSelectedFolder', 'past');
-    localStorage.setItem('lastSelectedMonth', month);
-    setLastSelectedFolder('past');
-    setLastSelectedMonth(month);
-    await loadDataFromFolder('past', month);
-  };
-  
-  // 현재 월 선택 핸들러
-  const handlePresentMonthChange = async (month: string) => {
-    console.log('Present month selected:', month);
-    localStorage.setItem('lastSelectedFolder', 'present');
-    localStorage.setItem('lastSelectedMonth', month);
-    setLastSelectedFolder('present');
-    setLastSelectedMonth(month);
-    await loadDataFromFolder('present', month);
-  };
-  
   // 폴더에서 데이터 로드하는 공통 함수
-  const loadDataFromFolder = async (folder: 'past' | 'present', month: string) => {
+  const loadDataFromFolder = useCallback(async (folder: 'past' | 'present', month: string) => {
     setLoading(true);
     setError('');
     
@@ -164,16 +68,7 @@ const App: React.FC = () => {
       } else if (isCategoryContent(firstContent)) {
         setIsDateBased(false);
         setSelectedCategory('전체');
-        // 기본적으로 전체 컨텐츠 표시
-        const sections = createContentSections('전체');
-        setContentSections(sections);
-        
-        const sentencesOnly = sections
-          .filter(section => section.type === 'sentence')
-          .map(section => section.sentence!)
-          .filter(Boolean);
-        setSentences(sentencesOnly);
-        setSelectedSubcategory('');
+        // createContentSections will be called in a separate useEffect
       }
     } catch (err) {
       console.error(`Error loading ${folder} data:`, err);
@@ -182,33 +77,10 @@ const App: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // 모든 문장 가져오기 함수
-  const getAllSentences = () => {
-    if (!sentenceData || !sentenceData.contents) return [];
-    
-    const allSentences: Sentence[] = [];
-    let idCounter = 1;
-    
-    sentenceData.contents
-      .filter(isCategoryContent)
-      .forEach(categoryContent => {
-        categoryContent.subcategories.forEach(subcategory => {
-          subcategory.sentences.forEach(sentence => {
-            allSentences.push({
-              ...sentence,
-              id: idCounter++
-            });
-          });
-        });
-      });
-    
-    return allSentences;
-  };
+  }, []);
 
   // 컨텐츠 섹션 생성 (서브카테고리 구분선 포함)
-  const createContentSections = (category: string) => {
+  const createContentSections = useCallback((category: string) => {
     if (!sentenceData || !sentenceData.contents) return [];
     
     const sections: ContentSection[] = [];
@@ -273,6 +145,102 @@ const App: React.FC = () => {
     }
     
     return sections;
+  }, [sentenceData]);
+
+  // 과거 및 현재 월 목록 로드
+  useEffect(() => {
+    const loadAllMonths = async () => {
+      try {
+        // 과거 파일 목록 로드
+        const pastManifestResponse = await fetch('/data/past/manifest.json');
+        if (pastManifestResponse.ok) {
+          const pastManifest = await pastManifestResponse.json();
+          const pastFiles = pastManifest.files || [];
+          
+          // 파일명에서 월 정보 추출 (202201.json -> 2022-01)
+          const pastMonths = pastFiles.map((filename: string) => {
+            const match = filename.match(/(\d{4})(\d{2})\.json/);
+            if (match) {
+              return `${match[1]}-${match[2]}`;
+            }
+            return null;
+          }).filter(Boolean);
+          
+          setPastMonths(pastMonths);
+          console.log('Past months loaded:', pastMonths);
+        }
+        
+        // 현재 파일 목록 로드
+        const presentManifestResponse = await fetch('/data/present/manifest.json');
+        if (presentManifestResponse.ok) {
+          const presentManifest = await presentManifestResponse.json();
+          const presentFiles = presentManifest.files || [];
+          
+          // 파일명에서 월 정보 추출 (202508.json -> 2025-08)
+          const presentMonths = presentFiles.map((filename: string) => {
+            const match = filename.match(/(\d{4})(\d{2})\.json/);
+            if (match) {
+              return `${match[1]}-${match[2]}`;
+            }
+            return null;
+          }).filter(Boolean);
+          
+          setPresentMonths(presentMonths);
+          console.log('Present months loaded:', presentMonths);
+        }
+      } catch (err) {
+        console.error('Error loading months:', err);
+      }
+    };
+    loadAllMonths();
+  }, []);
+
+  // 카테고리 기반 데이터일 때 기본 컨텐츠 섹션 설정
+  useEffect(() => {
+    if (sentenceData && !isDateBased && selectedCategory === '전체') {
+      const sections = createContentSections('전체');
+      setContentSections(sections);
+      
+      const sentencesOnly = sections
+        .filter(section => section.type === 'sentence')
+        .map(section => section.sentence!)
+        .filter(Boolean);
+      setSentences(sentencesOnly);
+    }
+  }, [sentenceData, isDateBased, selectedCategory, createContentSections]);
+
+
+  // 월 변경 핸들러
+  const handleMonthChange = (month: string) => {
+    console.log('Month changed to:', month);
+    setSelectedMonth(month);
+    
+    // 해당 월의 첫 번째 날짜 선택
+    const monthDates = availableFiles.filter(date => date.startsWith(month));
+    if (monthDates.length > 0) {
+      setSelectedDate(monthDates[0]);
+      // 여기서 새로운 데이터를 로드해야 함 (현재는 2025-08만 있음)
+    }
+  };
+
+  // 과거 월 선택 핸들러
+  const handlePastMonthChange = async (month: string) => {
+    console.log('Past month selected:', month);
+    localStorage.setItem('lastSelectedFolder', 'past');
+    localStorage.setItem('lastSelectedMonth', month);
+    setLastSelectedFolder('past');
+    setLastSelectedMonth(month);
+    await loadDataFromFolder('past', month);
+  };
+  
+  // 현재 월 선택 핸들러
+  const handlePresentMonthChange = async (month: string) => {
+    console.log('Present month selected:', month);
+    localStorage.setItem('lastSelectedFolder', 'present');
+    localStorage.setItem('lastSelectedMonth', month);
+    setLastSelectedFolder('present');
+    setLastSelectedMonth(month);
+    await loadDataFromFolder('present', month);
   };
 
   // 카테고리 변경 핸들러
@@ -290,7 +258,6 @@ const App: React.FC = () => {
       .map(section => section.sentence!)
       .filter(Boolean);
     setSentences(sentencesOnly);
-    setSelectedSubcategory('');
   };
 
 

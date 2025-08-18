@@ -1,5 +1,5 @@
 import React from 'react';
-import { SentenceData, isCategoryContent, isDateBasedContent } from '../types';
+import { SentenceData, isCategoryContent } from '../types';
 
 interface NavigationProps {
   availableDates: string[];
@@ -36,7 +36,6 @@ const Navigation: React.FC<NavigationProps> = ({
   onPastMonthChange,
   onPresentMonthChange,
 }) => {
-  const months = [...new Set(availableDates.map(date => date.substring(0, 7)))];
   const currentMonthDates = availableDates.filter(date => date.startsWith(selectedMonth));
 
   // Get categories for category-based structure

@@ -24,17 +24,7 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
     const text = sentence.sentence;
     
     try {
-      // 1. ResponsiveVoice API 시도 (네이버 앱 브라우저 지원)
-      if ((window as any).responsiveVoice) {
-        (window as any).responsiveVoice.speak(text, "Chinese Female", {
-          rate: 0.9,
-          pitch: 1,
-          volume: 1
-        });
-        return;
-      }
-      
-      // 2. Web Speech API 시도
+      // Web Speech API 사용
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'zh-CN';
@@ -43,7 +33,7 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
         return;
       }
       
-      // 3. 모든 방법이 실패하면 Google Translate 페이지로 이동
+      // Web Speech API를 지원하지 않으면 Google Translate 페이지로 이동
       const googleTranslateUrl = `https://translate.google.com/?sl=zh-CN&tl=ko&text=${encodeURIComponent(text)}&op=translate`;
       
       // 새 창으로 열기 (사용자가 직접 스피커 버튼 클릭 가능)
