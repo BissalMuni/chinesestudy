@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navigation from './components/Navigation';
 import SentenceCard from './components/SentenceCard';
-import { SentenceData, Sentence, isDateBasedContent, isCategoryContent, ContentSection } from './types';
+import { SentenceData, Sentence, isDateBasedContent, isCategoryContent, isDayContent, ContentSection, DayContent } from './types';
 import './styles/App.css';
 
 const App: React.FC = () => {
@@ -61,9 +61,38 @@ const App: React.FC = () => {
       
       setSentenceData(data);
       
-      // Check format and set initial data
+      // 새로운 JSON 구조 처리
       const firstContent = data.contents[0];
-      if (isDateBasedContent(firstContent)) {
+      if (isDayContent(firstContent)) {
+        // 새로운 구조: day와 content를 가진 형식
+        setIsDateBased(false); // 카테고리 기반으로 처리
+        localStorage.setItem('isDateBased', JSON.stringify(false));
+        
+        // 사용 가능한 날짜들 설정
+        const days = data.contents
+          .filter((content: any) => content.day)
+          .map((content: any) => content.day);
+        
+        if (days.length > 0) {
+          setSelectedMonth(month);
+          localStorage.setItem('selectedMonth', month);
+          
+          // 첫 번째 날짜 선택
+          const firstDay = days[0];
+          const dateStr = `${month}-${String(firstDay).padStart(2, '0')}`;
+          setSelectedDate(dateStr);
+          localStorage.setItem('selectedDate', dateStr);
+          
+          // 첫 번째 날짜의 데이터로 초기화
+          const firstDayContent = data.contents[0];
+          if (isDayContent(firstDayContent) && firstDayContent.content && firstDayContent.content.length > 0) {
+            const savedCategory = localStorage.getItem('selectedCategory') || '전체';
+            setSelectedCategory(savedCategory);
+            localStorage.setItem('selectedCategory', savedCategory);
+          }
+        }
+      } else if (isDateBasedContent(firstContent)) {
+        // 기존 날짜 기반 구조
         setIsDateBased(true);
         localStorage.setItem('isDateBased', JSON.stringify(true));
         setSentences(firstContent.sentences);
@@ -80,12 +109,12 @@ const App: React.FC = () => {
           localStorage.setItem('selectedDate', dateToSelect);
         }
       } else if (isCategoryContent(firstContent)) {
+        // 기존 카테고리 기반 구조
         setIsDateBased(false);
         localStorage.setItem('isDateBased', JSON.stringify(false));
         const savedCategory = localStorage.getItem('selectedCategory') || '전체';
         setSelectedCategory(savedCategory);
         localStorage.setItem('selectedCategory', savedCategory);
-        // createContentSections will be called in a separate useEffect
       }
     } catch (err) {
       console.error(`Error loading ${folder} data:`, err);
@@ -96,51 +125,20 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // 컨텐츠 섹션 생성 (서브카테고리 구분선 포함)
-  const createContentSections = useCallback((category: string) => {
-    if (!sentenceData || !sentenceData.contents) return [];
-    
+  // 특정 날짜의 컨텐츠 섹션 생성
+  const createContentSectionsForDay = useCallback((dayContent: DayContent) => {
     const sections: ContentSection[] = [];
     let idCounter = 1;
     
-    if (category === '전체') {
-      // 전체 선택 시 모든 카테고리와 서브카테고리 표시
-      sentenceData.contents
-        .filter(isCategoryContent)
-        .forEach(categoryContent => {
-          // 카테고리 구분선
-          sections.push({
-            type: 'divider',
-            dividerText: categoryContent.category
-          });
-          
-          categoryContent.subcategories.forEach(subcategory => {
-            // 서브카테고리 구분선
-            sections.push({
-              type: 'divider',
-              dividerText: subcategory.subcategory
-            });
-            
-            // 문장들
-            subcategory.sentences.forEach(sentence => {
-              sections.push({
-                type: 'sentence',
-                sentence: {
-                  ...sentence,
-                  id: idCounter++
-                }
-              });
-            });
-          });
+    if (dayContent.content) {
+      dayContent.content.forEach((categoryData: any) => {
+        // 카테고리 구분선
+        sections.push({
+          type: 'divider',
+          dividerText: categoryData.category
         });
-    } else {
-      // 특정 카테고리 선택 시
-      const categoryData = sentenceData.contents
-        .filter(isCategoryContent)
-        .find(content => content.category === category);
-      
-      if (categoryData) {
-        categoryData.subcategories.forEach(subcategory => {
+        
+        categoryData.subcategories.forEach((subcategory: any) => {
           // 서브카테고리 구분선
           sections.push({
             type: 'divider',
@@ -148,7 +146,52 @@ const App: React.FC = () => {
           });
           
           // 문장들
-          subcategory.sentences.forEach(sentence => {
+          subcategory.sentences.forEach((sentence: any) => {
+            sections.push({
+              type: 'sentence',
+              sentence: {
+                ...sentence,
+                id: idCounter++
+              }
+            });
+          });
+        });
+      });
+    }
+    
+    return sections;
+  }, []);
+
+  // 컨텐츠 섹션 생성 (카테고리별)
+  const createContentSections = useCallback((category: string) => {
+    if (!sentenceData || !sentenceData.contents) return [];
+    
+    const sections: ContentSection[] = [];
+    let idCounter = 1;
+    
+    // 선택된 날짜의 데이터 가져오기
+    const day = parseInt(selectedDate.split('-')[2]);
+    const dayContent = sentenceData.contents.find((content): content is DayContent => isDayContent(content) && content.day === day);
+    
+    if (!dayContent || !dayContent.content) return [];
+    
+    if (category === '전체') {
+      // 전체 선택 시 해당 날짜의 모든 카테고리 표시
+      return createContentSectionsForDay(dayContent);
+    } else {
+      // 특정 카테고리 선택 시
+      const categoryData = dayContent.content.find((cat: any) => cat.category === category);
+      
+      if (categoryData) {
+        categoryData.subcategories.forEach((subcategory: any) => {
+          // 서브카테고리 구분선
+          sections.push({
+            type: 'divider',
+            dividerText: subcategory.subcategory
+          });
+          
+          // 문장들
+          subcategory.sentences.forEach((sentence: any) => {
             sections.push({
               type: 'sentence',
               sentence: {
@@ -162,21 +205,18 @@ const App: React.FC = () => {
     }
     
     return sections;
-  }, [sentenceData]);
+  }, [sentenceData, selectedDate, createContentSectionsForDay]);
 
   // 과거 및 현재 월 목록 로드
   useEffect(() => {
     const loadAllMonths = async () => {
       try {
-        // 과거 파일 목록 로드
-        const pastManifestResponse = await fetch('/data/past/manifest.json');
-        if (pastManifestResponse.ok) {
-          const pastManifest = await pastManifestResponse.json();
-          const pastFiles = pastManifest.files || [];
-          
-          // 파일명에서 월 정보 추출 (202201.json -> 2022-01)
-          const pastMonths = pastFiles.map((filename: string) => {
-            const match = filename.match(/(\d{4})(\d{2})\.json/);
+        // Past months 로드
+        const pastResponse = await fetch('/data/past/manifest.json');
+        if (pastResponse.ok) {
+          const pastData = await pastResponse.json();
+          const pastMonths = pastData.files.map((file: string) => {
+            const match = file.match(/(\d{4})(\d{2})\.json$/);
             if (match) {
               return `${match[1]}-${match[2]}`;
             }
@@ -187,15 +227,12 @@ const App: React.FC = () => {
           console.log('Past months loaded:', pastMonths);
         }
         
-        // 현재 파일 목록 로드
-        const presentManifestResponse = await fetch('/data/present/manifest.json');
-        if (presentManifestResponse.ok) {
-          const presentManifest = await presentManifestResponse.json();
-          const presentFiles = presentManifest.files || [];
-          
-          // 파일명에서 월 정보 추출 (202508.json -> 2025-08)
-          const presentMonths = presentFiles.map((filename: string) => {
-            const match = filename.match(/(\d{4})(\d{2})\.json/);
+        // Present months 로드
+        const presentResponse = await fetch('/data/present/manifest.json');
+        if (presentResponse.ok) {
+          const presentData = await presentResponse.json();
+          const presentMonths = presentData.files.map((file: string) => {
+            const match = file.match(/(\d{4})(\d{2})\.json$/);
             if (match) {
               return `${match[1]}-${match[2]}`;
             }
@@ -312,23 +349,36 @@ const App: React.FC = () => {
   };
 
 
-  // 날짜 변경 핸들러
+  // 날짜 변경 핸들러 (새로운 JSON 구조 지원)
   const handleDateChange = (date: string) => {
     console.log('Date changed to:', date);
     setSelectedDate(date);
     localStorage.setItem('selectedDate', date);
     
-    // 선택된 날짜에 해당하는 문장 데이터 찾기
+    // 새로운 JSON 구조에서 day로 데이터 찾기
     if (sentenceData && sentenceData.contents) {
-      const selectedDateData = sentenceData.contents
-        .filter(isDateBasedContent)
-        .find(content => content.date === date);
-      if (selectedDateData) {
-        console.log('Found data for date:', date, selectedDateData);
-        setSentences(selectedDateData.sentences);
+      const day = parseInt(date.split('-')[2]);
+      const dayContent = sentenceData.contents.find((content): content is DayContent => isDayContent(content) && content.day === day);
+      
+      if (dayContent && dayContent.content) {
+        // 첫 번째 카테고리를 기본으로 선택
+        const firstCategory = dayContent.content[0]?.category || '전체';
+        setSelectedCategory(firstCategory);
+        localStorage.setItem('selectedCategory', firstCategory);
+        
+        // 해당 날짜의 모든 문장을 contentSections로 설정
+        const sections = createContentSectionsForDay(dayContent);
+        setContentSections(sections);
+        
+        const sentencesOnly = sections
+          .filter(section => section.type === 'sentence')
+          .map(section => section.sentence!)
+          .filter(Boolean);
+        setSentences(sentencesOnly);
       } else {
-        console.log('No data found for date:', date);
+        console.log('No data found for day:', day);
         setSentences([]);
+        setContentSections([]);
       }
     }
   };
@@ -352,10 +402,8 @@ const App: React.FC = () => {
   if (error) {
     return (
       <div className="app">
-        <div className="error">
-          <h2>오류 발생</h2>
-          <p>{error}</p>
-          <p>브라우저 콘솔(F12)을 확인해주세요.</p>
+        <div className="error-message">
+          오류: {error}
         </div>
       </div>
     );
@@ -364,67 +412,66 @@ const App: React.FC = () => {
   return (
     <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="app-header">
-        <div className="header-title">
-          <h1>진차이린 중국어</h1>
-          <button 
-            type="button"
-            className="theme-toggle" 
-            onClick={toggleDarkMode}
-            title={isDarkMode ? "라이트 모드로 변경" : "다크 모드로 변경"}
-          >
-            {isDarkMode ? '☀️' : '💡'}
-          </button>
-        </div>
-        {/* <div className="date-info">{formatDateDisplay()}</div> */}
+        <h1 className="app-title">中文学习</h1>
+        <button 
+          className="dark-mode-toggle"
+          onClick={toggleDarkMode}
+          aria-label="다크 모드 토글"
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
       </header>
-
-      {(availableFiles.length > 0 || sentenceData || pastMonths.length > 0 || presentMonths.length > 0) && (
-        <Navigation
-          availableDates={availableFiles}
-          pastMonths={pastMonths}
-          presentMonths={presentMonths}
-          selectedMonth={selectedMonth}
-          selectedDate={selectedDate}
-          selectedCategory={selectedCategory}
-          sentenceData={sentenceData}
-          isDateBased={isDateBased}
-          lastSelectedFolder={lastSelectedFolder}
-          lastSelectedMonth={lastSelectedMonth}
-          onMonthChange={handleMonthChange}
-          onDateChange={handleDateChange}
-          onCategoryChange={handleCategoryChange}
-          onPastMonthChange={handlePastMonthChange}
-          onPresentMonthChange={handlePresentMonthChange}
-        />
-      )}
-
-      <main className="content">
-        {contentSections.length > 0 ? (
-          <div className="content-container">
-            {contentSections.map((section, index) => (
+      
+      <Navigation
+        availableDates={availableFiles}
+        pastMonths={pastMonths}
+        presentMonths={presentMonths}
+        selectedMonth={selectedMonth}
+        selectedDate={selectedDate}
+        selectedCategory={selectedCategory}
+        sentenceData={sentenceData}
+        lastSelectedFolder={lastSelectedFolder}
+        lastSelectedMonth={lastSelectedMonth}
+        onMonthChange={handleMonthChange}
+        onDateChange={handleDateChange}
+        onCategoryChange={handleCategoryChange}
+        onPastMonthChange={handlePastMonthChange}
+        onPresentMonthChange={handlePresentMonthChange}
+      />
+      
+      <main className="main-content">
+        <div className="sentences-container">
+          {!isDateBased && contentSections.length > 0 ? (
+            // 카테고리 기반 렌더링 (서브카테고리 구분선 포함)
+            contentSections.map((section, index) => (
               section.type === 'divider' ? (
                 <div key={`divider-${index}`} className="subcategory-divider">
                   <h3>{section.dividerText}</h3>
                 </div>
               ) : (
-                section.sentence && (
-                  <SentenceCard key={section.sentence.id} sentence={section.sentence} />
-                )
+                <SentenceCard
+                  key={`sentence-${section.sentence?.id || index}`}
+                  sentence={section.sentence!}
+                />
               )
-            ))}
-          </div>
-        ) : sentences.length > 0 ? (
-          <div className="sentences-container">
-            {sentences.map((sentence) => (
-              <SentenceCard key={sentence.id} sentence={sentence} />
-            ))}
-          </div>
-        ) : (
-          <div className="error">
-            <h2>환영합니다!</h2>
-            <p>위에서 학습할 자료를 선택해주세요.</p>
-          </div>
-        )}
+            ))
+          ) : (
+            // 날짜 기반 렌더링 또는 빈 상태
+            sentences.length > 0 ? (
+              sentences.map((sentence) => (
+                <SentenceCard
+                  key={sentence.id}
+                  sentence={sentence}
+                />
+              ))
+            ) : (
+              <div className="no-data">
+                <p>표시할 문장이 없습니다.</p>
+                <p>날짜 또는 카테고리를 선택해주세요.</p>
+              </div>
+            )
+          )}
+        </div>
       </main>
     </div>
   );

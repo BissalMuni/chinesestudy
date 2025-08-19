@@ -32,20 +32,30 @@ export interface CategoryContent {
   subcategories: Subcategory[];
 }
 
-// Main data structure that supports both formats
+// For new day-based structure with categories
+export interface DayContent {
+  day: number;
+  content: CategoryContent[];
+}
+
+// Main data structure that supports all formats
 export interface SentenceData {
   month: string;
   language: string;
-  contents: Array<DateBasedContent | CategoryContent>;
+  contents: Array<DateBasedContent | CategoryContent | DayContent>;
 }
 
 // Type guards to check content type
-export function isDateBasedContent(content: DateBasedContent | CategoryContent): content is DateBasedContent {
+export function isDateBasedContent(content: DateBasedContent | CategoryContent | DayContent): content is DateBasedContent {
   return 'date' in content;
 }
 
-export function isCategoryContent(content: CategoryContent | DateBasedContent): content is CategoryContent {
+export function isCategoryContent(content: CategoryContent | DateBasedContent | DayContent): content is CategoryContent {
   return 'category' in content;
+}
+
+export function isDayContent(content: DateBasedContent | CategoryContent | DayContent): content is DayContent {
+  return 'day' in content;
 }
 
 // For organizing content with subcategory dividers

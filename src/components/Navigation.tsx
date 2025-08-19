@@ -1,5 +1,5 @@
-import React from 'react';
-import { SentenceData, isCategoryContent } from '../types';
+import React, { useRef, useEffect } from 'react';
+import { SentenceData, isDayContent } from '../types';
 
 interface NavigationProps {
   availableDates: string[];
@@ -9,7 +9,6 @@ interface NavigationProps {
   selectedDate: string;
   selectedCategory: string;
   sentenceData: SentenceData | null;
-  isDateBased: boolean;
   lastSelectedFolder: string;
   lastSelectedMonth: string;
   onMonthChange: (month: string) => void;
@@ -27,7 +26,6 @@ const Navigation: React.FC<NavigationProps> = ({
   selectedDate,
   selectedCategory,
   sentenceData,
-  isDateBased,
   lastSelectedFolder,
   lastSelectedMonth,
   onMonthChange,
@@ -36,94 +34,132 @@ const Navigation: React.FC<NavigationProps> = ({
   onPastMonthChange,
   onPresentMonthChange,
 }) => {
-  const currentMonthDates = availableDates.filter(date => date.startsWith(selectedMonth));
+  const monthScrollRef = useRef<HTMLDivElement>(null);
+  const dayScrollRef = useRef<HTMLDivElement>(null);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
 
-  // Get categories for category-based structure
-  const categories = sentenceData?.contents
-    .filter(isCategoryContent)
-    .map(content => content.category) || [];
+  // Get all months (past + present)
+  const allMonths = [...pastMonths, ...presentMonths].sort();
+  
+  // Get days for selected month
+  const getDaysForMonth = () => {
+    if (!sentenceData?.contents) return [];
+    
+    // Extract unique days from the contents
+    const days = sentenceData.contents
+      .filter(isDayContent)
+      .map(content => content.day)
+      .filter((day, index, self) => self.indexOf(day) === index)
+      .sort((a, b) => a - b);
+    
+    return days;
+  };
+  
+  const days = getDaysForMonth();
+  
+  // Get categories for selected day
+  const getCategoriesForDay = () => {
+    if (!sentenceData?.contents) return [];
+    
+    const selectedDay = parseInt(selectedDate.split('-')[2]) || 1;
+    const dayContent = sentenceData.contents.find((content): content is import('../types').DayContent => 
+      isDayContent(content) && content.day === selectedDay
+    );
+    
+    if (!dayContent?.content) return [];
+    
+    return dayContent.content.map(cat => cat.category);
+  };
+  
+  const categories = getCategoriesForDay();
 
   const formatMonth = (month: string) => {
     const [year, monthNum] = month.split('-');
     return `${year}년 ${monthNum}월`;
   };
 
-  const formatDate = (date: string) => {
-    const day = date.split('-')[2];
-    return `${day}일`;
-  };
+  // Auto-scroll to selected item
+  useEffect(() => {
+    const scrollToSelected = (ref: React.RefObject<HTMLDivElement>, selector: string) => {
+      if (ref.current) {
+        const selectedElement = ref.current.querySelector(selector);
+        if (selectedElement) {
+          selectedElement.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }
+    };
+
+    scrollToSelected(monthScrollRef, '.month-item.active');
+    scrollToSelected(dayScrollRef, '.day-item.active');
+    scrollToSelected(categoryScrollRef, '.category-item.active');
+  }, [selectedMonth, selectedDate, selectedCategory]);
 
   return (
-    <nav className="navigation">
-      <div className="selectors-container">
-        {pastMonths.length > 0 && (
-          <div className="past-month-selector">
-            <label htmlFor="past-month-select" className="visually-hidden">과거 자료</label>
-            <select
-              id="past-month-select"
-              value={lastSelectedFolder === 'past' ? lastSelectedMonth : ""}
-              onChange={(e) => e.target.value && onPastMonthChange(e.target.value)}
-            >
-              <option value="">과거 자료</option>
-              {pastMonths.map(month => (
-                <option key={month} value={month}>
+    <nav className="navigation-vertical">
+      {/* Month Navigation */}
+      <div className="nav-section">
+        <div className="nav-scroll-container" ref={monthScrollRef}>
+          <div className="nav-items-horizontal">
+            {allMonths.map(month => {
+              const folder = pastMonths.includes(month) ? 'past' : 'present';
+              return (
+                <button
+                  key={month}
+                  className={`month-item ${selectedMonth === month ? 'active' : ''}`}
+                  onClick={() => folder === 'past' ? onPastMonthChange(month) : onPresentMonthChange(month)}
+                >
                   {formatMonth(month)}
-                </option>
-              ))}
-            </select>
+                </button>
+              );
+            })}
           </div>
-        )}
-        
-        {presentMonths.length > 0 && (
-          <div className="present-month-selector">
-            <label htmlFor="present-month-select" className="visually-hidden">현재 학습</label>
-            <select
-              id="present-month-select"
-              value={lastSelectedFolder === 'present' ? lastSelectedMonth : ""}
-              onChange={(e) => e.target.value && onPresentMonthChange(e.target.value)}
-            >
-              <option value="">현재 학습</option>
-              {presentMonths.map(month => (
-                <option key={month} value={month}>
-                  {formatMonth(month)}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        </div>
       </div>
 
-      {isDateBased ? (
-        // Date-based navigation (old format)
-        <div className="date-tabs">
-          {currentMonthDates.map(date => (
-            <button
-              key={date}
-              className={`date-tab ${selectedDate === date ? 'active' : ''}`}
-              onClick={() => onDateChange(date)}
-            >
-              {formatDate(date)}
-            </button>
-          ))}
+      {/* Day Navigation */}
+      {days.length > 0 && (
+        <div className="nav-section">
+          <div className="nav-scroll-container" ref={dayScrollRef}>
+            <div className="nav-items-horizontal">
+              {days.map(day => {
+                const dateStr = `${selectedMonth}-${String(day).padStart(2, '0')}`;
+                return (
+                  <button
+                    key={day}
+                    className={`day-item ${selectedDate.endsWith(String(day).padStart(2, '0')) ? 'active' : ''}`}
+                    onClick={() => onDateChange(dateStr)}
+                  >
+                    {day}일
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      ) : (
-        // Category-based navigation (new format)
-        <div className="category-tabs">
-          <button
-            className={`category-tab ${selectedCategory === '전체' ? 'active' : ''}`}
-            onClick={() => onCategoryChange('전체')}
-          >
-            전체
-          </button>
-          {categories.map(category => (
-            <button
-              key={category}
-              className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
-              onClick={() => onCategoryChange(category)}
-            >
-              {category}
-            </button>
-          ))}
+      )}
+
+      {/* Category Navigation */}
+      {categories.length > 0 && (
+        <div className="nav-section">
+          <div className="nav-scroll-container" ref={categoryScrollRef}>
+            <div className="nav-items-horizontal">
+              <button
+                className={`category-item ${selectedCategory === '전체' ? 'active' : ''}`}
+                onClick={() => onCategoryChange('전체')}
+              >
+                전체
+              </button>
+              {categories.map(category => (
+                <button
+                  key={category}
+                  className={`category-item ${selectedCategory === category ? 'active' : ''}`}
+                  onClick={() => onCategoryChange(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </nav>
