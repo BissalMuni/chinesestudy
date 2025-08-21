@@ -19,6 +19,8 @@
                                     "words": [
                                         {
                                             "chinese": "好久",
+                                            "chinese_trad": "好久",
+                                            "chinese_trad_m": "좋을 호, 오랠 구",
                                             "pinyin": "hǎojiǔ",
                                             "korean": "오랫동안",
                                             "english": "long time",
@@ -26,6 +28,8 @@
                                         },
                                         {
                                             "chinese": "不",
+                                            "chinese_trad": "不",
+                                            "chinese_trad_m": "아닐 부",
                                             "pinyin": "bù",
                                             "korean": "~지 않다",
                                             "english": "not",
@@ -33,6 +37,8 @@
                                         },
                                         {
                                             "chinese": "见",
+                                            "chinese_trad": "見",
+                                            "chinese_trad_m": "볼 견",
                                             "pinyin": "jiàn",
                                             "korean": "보다, 만나다",
                                             "english": "see, meet",
@@ -48,6 +54,8 @@
                                     "words": [
                                         {
                                             "chinese": "老",
+                                            "chinese_trad": "老",
+                                            "chinese_trad_m": "늙을 로",
                                             "pinyin": "lǎo",
                                             "korean": "오래된, 예전의",
                                             "english": "old, former",
@@ -55,6 +63,8 @@
                                         },
                                         {
                                             "chinese": "样子",
+                                            "chinese_trad": "樣子",
+                                            "chinese_trad_m": "모양 양, 아들 자",
                                             "pinyin": "yàngzi",
                                             "korean": "모습, 상태",
                                             "english": "appearance, state",
@@ -75,6 +85,8 @@
                                     "words": [
                                         {
                                             "chinese": "你",
+                                            "chinese_trad": "你",
+                                            "chinese_trad_m": "너 니",
                                             "pinyin": "nǐ",
                                             "korean": "너, 당신",
                                             "english": "you",
@@ -82,6 +94,8 @@
                                         },
                                         {
                                             "chinese": "过",
+                                            "chinese_trad": "過",
+                                            "chinese_trad_m": "지날 과",
                                             "pinyin": "guò",
                                             "korean": "지내다, 보내다",
                                             "english": "live, spend time",
@@ -89,6 +103,8 @@
                                         },
                                         {
                                             "chinese": "得",
+                                            "chinese_trad": "得",
+                                            "chinese_trad_m": "얻을 득",
                                             "pinyin": "de",
                                             "korean": "~하게 (상태보어 표시)",
                                             "english": "particle (result complement)",
@@ -96,6 +112,8 @@
                                         },
                                         {
                                             "chinese": "怎么样",
+                                            "chinese_trad": "怎麼樣",
+                                            "chinese_trad_m": "어찌할 잠, 무엇 마, 모양 양",
                                             "pinyin": "zěnmeyàng",
                                             "korean": "어떻게, 어떤지",
                                             "english": "how, what about",
@@ -111,6 +129,8 @@
                                     "words": [
                                         {
                                             "chinese": "忙",
+                                            "chinese_trad": "忙",
+                                            "chinese_trad_m": "바쁠 망",
                                             "pinyin": "máng",
                                             "korean": "바쁘다",
                                             "english": "busy",
@@ -118,6 +138,8 @@
                                         },
                                         {
                                             "chinese": "什么",
+                                            "chinese_trad": "什麼",
+                                            "chinese_trad_m": "무엇 십, 무엇 마",
                                             "pinyin": "shénme",
                                             "korean": "무엇",
                                             "english": "what",
@@ -138,6 +160,8 @@
                                     "words": [
                                         {
                                             "chinese": "你",
+                                            "chinese_trad": "你",
+                                            "chinese_trad_m": "너 니",
                                             "pinyin": "nǐ",
                                             "korean": "너, 당신",
                                             "english": "you",
@@ -145,6 +169,8 @@
                                         },
                                         {
                                             "chinese": "变",
+                                            "chinese_trad": "變",
+                                            "chinese_trad_m": "변할 변",
                                             "pinyin": "biàn",
                                             "korean": "변하다",
                                             "english": "change",
@@ -152,6 +178,8 @@
                                         },
                                         {
                                             "chinese": "得",
+                                            "chinese_trad": "得",
+                                            "chinese_trad_m": "얻을 득",
                                             "pinyin": "de",
                                             "korean": "~하게 (정도보어 표시)",
                                             "english": "particle (degree complement)",
@@ -159,6 +187,8 @@
                                         },
                                         {
                                             "chinese": "都",
+                                            "chinese_trad": "都",
+                                            "chinese_trad_m": "모두 도",
                                             "pinyin": "dōu",
                                             "korean": "모두, 다",
                                             "english": "all, even",
@@ -166,6 +196,8 @@
                                         },
                                         {
                                             "chinese": "认不出来",
+                                            "chinese_trad": "認不出來",
+                                            "chinese_trad_m": "알 인, 아닐 부, 날 출, 올 래",
                                             "pinyin": "rènbuchūlái",
                                             "korean": "알아볼 수 없다",
                                             "english": "cannot recognize",
@@ -173,6 +205,8 @@
                                         },
                                         {
                                             "chinese": "了",
+                                            "chinese_trad": "了",
+                                            "chinese_trad_m": "끝날 료",
                                             "pinyin": "le",
                                             "korean": "~했다 (완료 표시)",
                                             "english": "particle (completion)",
@@ -188,6 +222,8 @@
                                     "words": [
                                         {
                                             "chinese": "你",
+                                            "chinese_trad": "你",
+                                            "chinese_trad_m": "너 니",
                                             "pinyin": "nǐ",
                                             "korean": "너, 당신",
                                             "english": "you",
@@ -195,6 +231,8 @@
                                         },
                                         {
                                             "chinese": "还",
+                                            "chinese_trad": "還",
+                                            "chinese_trad_m": "돌아올 환",
                                             "pinyin": "hái",
                                             "korean": "아직, 여전히",
                                             "english": "still, yet",
@@ -202,6 +240,8 @@
                                         },
                                         {
                                             "chinese": "记得",
+                                            "chinese_trad": "記得",
+                                            "chinese_trad_m": "기록할 기, 얻을 득",
                                             "pinyin": "jìde",
                                             "korean": "기억하다",
                                             "english": "remember",
@@ -209,6 +249,8 @@
                                         },
                                         {
                                             "chinese": "我",
+                                            "chinese_trad": "我",
+                                            "chinese_trad_m": "나 아",
                                             "pinyin": "wǒ",
                                             "korean": "나, 저",
                                             "english": "I, me",
@@ -216,6 +258,8 @@
                                         },
                                         {
                                             "chinese": "吗",
+                                            "chinese_trad": "嗎",
+                                            "chinese_trad_m": "물을 마",
                                             "pinyin": "ma",
                                             "korean": "~니? (의문문 표시)",
                                             "english": "question particle",
@@ -231,6 +275,8 @@
                                     "words": [
                                         {
                                             "chinese": "世界",
+                                            "chinese_trad": "世界",
+                                            "chinese_trad_m": "세상 세, 경계 계",
                                             "pinyin": "shìjiè",
                                             "korean": "세계, 세상",
                                             "english": "world",
@@ -238,6 +284,8 @@
                                         },
                                         {
                                             "chinese": "真",
+                                            "chinese_trad": "真",
+                                            "chinese_trad_m": "참 진",
                                             "pinyin": "zhēn",
                                             "korean": "정말, 참",
                                             "english": "really, truly",
@@ -245,6 +293,8 @@
                                         },
                                         {
                                             "chinese": "小",
+                                            "chinese_trad": "小",
+                                            "chinese_trad_m": "작을 소",
                                             "pinyin": "xiǎo",
                                             "korean": "작다",
                                             "english": "small",
@@ -252,6 +302,8 @@
                                         },
                                         {
                                             "chinese": "我们",
+                                            "chinese_trad": "我們",
+                                            "chinese_trad_m": "나 아, 무리 문",
                                             "pinyin": "wǒmen",
                                             "korean": "우리",
                                             "english": "we, us",
@@ -259,6 +311,8 @@
                                         },
                                         {
                                             "chinese": "又",
+                                            "chinese_trad": "又",
+                                            "chinese_trad_m": "또 우",
                                             "pinyin": "yòu",
                                             "korean": "또, 다시",
                                             "english": "again",
@@ -266,6 +320,8 @@
                                         },
                                         {
                                             "chinese": "见面",
+                                            "chinese_trad": "見面",
+                                            "chinese_trad_m": "볼 견, 얼굴 면",
                                             "pinyin": "jiànmiàn",
                                             "korean": "만나다",
                                             "english": "meet",
@@ -273,6 +329,8 @@
                                         },
                                         {
                                             "chinese": "了",
+                                            "chinese_trad": "了",
+                                            "chinese_trad_m": "끝날 료",
                                             "pinyin": "le",
                                             "korean": "~했다 (완료 표시)",
                                             "english": "particle (completion)",
@@ -298,6 +356,8 @@
                                     "words": [
                                         {
                                             "chinese": "打通",
+                                            "chinese_trad": "打通",
+                                            "chinese_trad_m": "칠 타, 통할 통",
                                             "pinyin": "dǎtōng",
                                             "korean": "연결하다, 뚫다",
                                             "english": "get through, connect",
@@ -305,6 +365,8 @@
                                         },
                                         {
                                             "chinese": "了",
+                                            "chinese_trad": "了",
+                                            "chinese_trad_m": "끝날 료",
                                             "pinyin": "le",
                                             "korean": "~했다 (완료 표시)",
                                             "english": "particle (completion)",
@@ -320,6 +382,8 @@
                                     "words": [
                                         {
                                             "chinese": "打",
+                                            "chinese_trad": "打",
+                                            "chinese_trad_m": "칠 타",
                                             "pinyin": "dǎ",
                                             "korean": "치다, 걸다(전화)",
                                             "english": "hit, make (phone call)",
@@ -327,6 +391,8 @@
                                         },
                                         {
                                             "chinese": "不",
+                                            "chinese_trad": "不",
+                                            "chinese_trad_m": "아닐 부",
                                             "pinyin": "bu",
                                             "korean": "~지 않다 (가능성 부정)",
                                             "english": "not (possibility negative)",
@@ -334,6 +400,8 @@
                                         },
                                         {
                                             "chinese": "通",
+                                            "chinese_trad": "通",
+                                            "chinese_trad_m": "통할 통",
                                             "pinyin": "tōng",
                                             "korean": "통하다, 연결되다",
                                             "english": "through, connected",
@@ -354,6 +422,8 @@
                                     "words": [
                                         {
                                             "chinese": "换",
+                                            "chinese_trad": "換",
+                                            "chinese_trad_m": "바꿀 환",
                                             "pinyin": "huàn",
                                             "korean": "바꾸다",
                                             "english": "change, exchange",
@@ -361,6 +431,8 @@
                                         },
                                         {
                                             "chinese": "号码",
+                                            "chinese_trad": "號碼",
+                                            "chinese_trad_m": "호령할 호, 말 마",
                                             "pinyin": "hàomǎ",
                                             "korean": "번호",
                                             "english": "number",
@@ -376,6 +448,8 @@
                                     "words": [
                                         {
                                             "chinese": "留",
+                                            "chinese_trad": "留",
+                                            "chinese_trad_m": "머물 류",
                                             "pinyin": "liú",
                                             "korean": "남기다, 두다",
                                             "english": "leave, keep",
@@ -383,6 +457,8 @@
                                         },
                                         {
                                             "chinese": "个",
+                                            "chinese_trad": "個",
+                                            "chinese_trad_m": "개 개",
                                             "pinyin": "ge",
                                             "korean": "개 (일반 양사)",
                                             "english": "classifier (general)",
@@ -390,6 +466,8 @@
                                         },
                                         {
                                             "chinese": "电话",
+                                            "chinese_trad": "電話",
+                                            "chinese_trad_m": "번개 전, 말씨 화",
                                             "pinyin": "diànhuà",
                                             "korean": "전화",
                                             "english": "telephone",
@@ -397,6 +475,8 @@
                                         },
                                         {
                                             "chinese": "号码",
+                                            "chinese_trad": "號碼",
+                                            "chinese_trad_m": "호령할 호, 말 마",
                                             "pinyin": "hàomǎ",
                                             "korean": "번호",
                                             "english": "number",
@@ -417,6 +497,8 @@
                                     "words": [
                                         {
                                             "chinese": "咱们",
+                                            "chinese_trad": "咱們",
+                                            "chinese_trad_m": "우리 잠, 무리 문",
                                             "pinyin": "zánmen",
                                             "korean": "우리 (화자 포함)",
                                             "english": "we (inclusive)",
@@ -424,6 +506,8 @@
                                         },
                                         {
                                             "chinese": "加",
+                                            "chinese_trad": "加",
+                                            "chinese_trad_m": "더할 가",
                                             "pinyin": "jiā",
                                             "korean": "더하다, 추가하다",
                                             "english": "add",
@@ -431,6 +515,8 @@
                                         },
                                         {
                                             "chinese": "个",
+                                            "chinese_trad": "個",
+                                            "chinese_trad_m": "개 개",
                                             "pinyin": "ge",
                                             "korean": "개 (일반 양사)",
                                             "english": "classifier (general)",
@@ -438,6 +524,8 @@
                                         },
                                         {
                                             "chinese": "微信",
+                                            "chinese_trad": "微信",
+                                            "chinese_trad_m": "작을 미, 믿을 신",
                                             "pinyin": "wēixìn",
                                             "korean": "위챗",
                                             "english": "WeChat",
@@ -445,6 +533,8 @@
                                         },
                                         {
                                             "chinese": "吧",
+                                            "chinese_trad": "吧",
+                                            "chinese_trad_m": "그만둘 바",
                                             "pinyin": "ba",
                                             "korean": "~하자 (제안 표시)",
                                             "english": "particle (suggestion)",
@@ -460,6 +550,8 @@
                                     "words": [
                                         {
                                             "chinese": "我们",
+                                            "chinese_trad": "我們",
+                                            "chinese_trad_m": "나 아, 무리 문",
                                             "pinyin": "wǒmen",
                                             "korean": "우리",
                                             "english": "we, us",
@@ -467,6 +559,8 @@
                                         },
                                         {
                                             "chinese": "视频",
+                                            "chinese_trad": "視頻",
+                                            "chinese_trad_m": "볼 시, 자주 빈",
                                             "pinyin": "shìpín",
                                             "korean": "영상, 비디오",
                                             "english": "video",
@@ -474,6 +568,8 @@
                                         },
                                         {
                                             "chinese": "聊天",
+                                            "chinese_trad": "聊天",
+                                            "chinese_trad_m": "따질 료, 하늘 천",
                                             "pinyin": "liáotiān",
                                             "korean": "채팅하다, 수다떨다",
                                             "english": "chat",
@@ -481,6 +577,8 @@
                                         },
                                         {
                                             "chinese": "吧",
+                                            "chinese_trad": "吧",
+                                            "chinese_trad_m": "그만둘 바",
                                             "pinyin": "ba",
                                             "korean": "~하자 (제안 표시)",
                                             "english": "particle (suggestion)",
@@ -506,6 +604,8 @@
                                     "words": [
                                         {
                                             "chinese": "吃",
+                                            "chinese_trad": "吃",
+                                            "chinese_trad_m": "먹을 식",
                                             "pinyin": "chī",
                                             "korean": "먹다",
                                             "english": "eat",
@@ -513,6 +613,8 @@
                                         },
                                         {
                                             "chinese": "顿",
+                                            "chinese_trad": "頓",
+                                            "chinese_trad_m": "머리존 돈",
                                             "pinyin": "dùn",
                                             "korean": "끼 (식사 양사)",
                                             "english": "classifier (meal)",
@@ -520,6 +622,8 @@
                                         },
                                         {
                                             "chinese": "饭",
+                                            "chinese_trad": "饭",
+                                            "chinese_trad_m": "밥 반",
                                             "pinyin": "fàn",
                                             "korean": "밥, 식사",
                                             "english": "rice, meal",
@@ -535,6 +639,8 @@
                                     "words": [
                                         {
                                             "chinese": "有",
+                                            "chinese_trad": "有",
+                                            "chinese_trad_m": "있을 유",
                                             "pinyin": "yǒu",
                                             "korean": "있다",
                                             "english": "have",
@@ -542,6 +648,8 @@
                                         },
                                         {
                                             "chinese": "时间",
+                                            "chinese_trad": "時間",
+                                            "chinese_trad_m": "때 시, 사이 간",
                                             "pinyin": "shíjiān",
                                             "korean": "시간",
                                             "english": "time",
@@ -549,6 +657,8 @@
                                         },
                                         {
                                             "chinese": "的话",
+                                            "chinese_trad": "的話",
+                                            "chinese_trad_m": "과녁 적, 말씨 화",
                                             "pinyin": "dehuà",
                                             "korean": "~라면, ~할 경우",
                                             "english": "if, in case of",
@@ -556,6 +666,8 @@
                                         },
                                         {
                                             "chinese": "咱们",
+                                            "chinese_trad": "咱們",
+                                            "chinese_trad_m": "우리 잠, 무리 문",
                                             "pinyin": "zánmen",
                                             "korean": "우리 (화자 포함)",
                                             "english": "we (inclusive)",
@@ -563,6 +675,8 @@
                                         },
                                         {
                                             "chinese": "吃顿饭",
+                                            "chinese_trad": "吃頓饭",
+                                            "chinese_trad_m": "먹을 식, 머리존 돈, 밥 반",
                                             "pinyin": "chīdùnfàn",
                                             "korean": "한끼 먹다",
                                             "english": "have a meal",
@@ -570,6 +684,8 @@
                                         },
                                         {
                                             "chinese": "吧",
+                                            "chinese_trad": "吧",
+                                            "chinese_trad_m": "그만둘 바",
                                             "pinyin": "ba",
                                             "korean": "~하자 (제안 표시)",
                                             "english": "particle (suggestion)",
@@ -590,6 +706,8 @@
                                     "words": [
                                         {
                                             "chinese": "这样",
+                                            "chinese_trad": "這樣",
+                                            "chinese_trad_m": "이 이, 모양 양",
                                             "pinyin": "zhèyàng",
                                             "korean": "이렇게",
                                             "english": "this way",
@@ -597,6 +715,8 @@
                                         },
                                         {
                                             "chinese": "吧",
+                                            "chinese_trad": "吧",
+                                            "chinese_trad_m": "그만둘 바",
                                             "pinyin": "ba",
                                             "korean": "~하자 (제안 표시)",
                                             "english": "particle (suggestion)",

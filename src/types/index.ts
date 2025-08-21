@@ -1,9 +1,18 @@
 export interface Word {
   chinese: string;
+  chinese_trad?: string;
+  chinese_trad_m?: string;
   pinyin: string;
   korean: string;
   english: string;
   type: string;
+}
+
+export interface Example {
+  sentence: string;
+  pinyin: string;
+  korean: string;
+  english: string;
 }
 
 export interface Sentence {
@@ -13,6 +22,7 @@ export interface Sentence {
   'meaning-korean': string;
   'meaning-english': string;
   words: Word[];
+  examples?: Example[];
 }
 
 // For date-based structure (old format)

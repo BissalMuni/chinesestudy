@@ -9,6 +9,7 @@ interface SentenceCardProps {
 const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showWords, setShowWords] = useState(false);
+  const [showExamples, setShowExamples] = useState(false);
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
@@ -18,10 +19,14 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
     setShowWords(!showWords);
   };
 
-  const playAudio = async (event: React.MouseEvent) => {
-    event.stopPropagation(); // 부모 클릭 이벤트 방지
-    
-    const text = sentence.sentence;
+  const toggleExamples = () => {
+    setShowExamples(!showExamples);
+  };
+
+  const playAudio = async (text: string, event?: React.MouseEvent) => {
+    if (event) {
+      event.stopPropagation(); // 부모 클릭 이벤트 방지
+    }
     
     try {
       // Web Speech API 사용
@@ -59,7 +64,7 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
         <button 
           type="button"
           className="audio-button" 
-          onClick={playAudio}
+          onClick={(e) => playAudio(sentence.sentence, e)}
           title="음성 재생"
         >
           🔊
@@ -95,6 +100,41 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
             </div>
           </div>
         </div>
+        
+        {sentence.examples && sentence.examples.length > 0 && (
+          <div className="examples-section">
+            <div className="examples-toggle" onClick={toggleExamples}>
+              <div className="examples-title">💡 예제 문장 ({sentence.examples.length}개)</div>
+              <span className={`toggle-arrow ${showExamples ? 'expanded' : ''}`}>
+                ▼
+              </span>
+            </div>
+            <div className={`examples-content ${showExamples ? 'expanded' : ''}`}>
+              <div className="examples-list">
+                {sentence.examples.map((example, index) => (
+                  <div key={index} className="example-card">
+                    <div className="example-sentence-container">
+                      <div className="example-sentence">{example.sentence}</div>
+                      <button 
+                        type="button"
+                        className="audio-button-small" 
+                        onClick={(e) => playAudio(example.sentence, e)}
+                        title="음성 재생"
+                      >
+                        🔊
+                      </button>
+                    </div>
+                    <div className="example-pinyin">{example.pinyin}</div>
+                    <div className="example-meanings">
+                      <div className="example-meaning">🇰🇷 {example.korean}</div>
+                      <div className="example-meaning">🇺🇸 {example.english}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -223,12 +223,53 @@ body {
   border-left-color: #667eea;
 }
 
+.app.dark-mode .example-card {
+  background: #2c3e50;
+  border-left-color: #8080ff;
+}
+
+.app.dark-mode .example-sentence {
+  color: #ecf0f1;
+}
+
+.app.dark-mode .example-pinyin {
+  color: #95a5a6;
+}
+
+.app.dark-mode .example-meaning {
+  color: #bdc3c7;
+}
+
+.app.dark-mode .examples-toggle {
+  background: #2c3e50;
+}
+
+.app.dark-mode .examples-toggle:hover {
+  background: #34495e;
+}
+
+.app.dark-mode .examples-title {
+  color: #9b59b6;
+}
+
+.app.dark-mode .audio-button-small:hover {
+  background: #34495e;
+}
+
 .app.dark-mode .word-chinese {
   color: #ecf0f1;
 }
 
+.app.dark-mode .word-chinese-complex {
+  color: #95a5a6;
+}
+
 .app.dark-mode .word-meaning {
   color: #bdc3c7;
+}
+
+.app.dark-mode .word-meaning-detail {
+  color: #7f8c8d;
 }
 
 .app {
@@ -545,6 +586,30 @@ body {
   transform: scale(0.95);
 }
 
+.audio-button-small {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.audio-button-small:hover {
+  background: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.audio-button-small:active {
+  transform: scale(0.95);
+}
+
 .sentence-details {
   max-height: 0;
   overflow: hidden;
@@ -655,10 +720,42 @@ body {
   border-left: 4px solid #667eea;
 }
 
+.word-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.word-chinese-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .word-chinese {
   font-size: 1.5rem;
   color: #2c3e50;
-  margin-bottom: 5px;
+}
+
+.word-chinese-complex {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.word-meaning-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 3px;
+}
+
+.word-meaning-detail {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  font-style: italic;
+  margin-left: 20px;
 }
 
 .word-pinyin {
@@ -682,6 +779,91 @@ body {
   color: #667eea;
   margin-top: 5px;
   font-weight: bold;
+}
+
+/* Examples Section Styles */
+.examples-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px dashed #e0e0e0;
+}
+
+.examples-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px;
+  background: #f5f5ff;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.examples-toggle:hover {
+  background: #e8e8ff;
+}
+
+.examples-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.examples-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  margin-top: 10px;
+}
+
+.examples-content.expanded {
+  max-height: none;
+}
+
+.examples-list {
+  display: grid;
+  gap: 15px;
+}
+
+.example-card {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 15px;
+  border-left: 3px solid #a0a0ff;
+}
+
+.example-sentence-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.example-sentence {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.example-pinyin {
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.example-meanings {
+  display: grid;
+  gap: 5px;
+}
+
+.example-meaning {
+  font-size: 0.9rem;
+  color: #555;
 }
 
 /* Loading and Error Styles */
