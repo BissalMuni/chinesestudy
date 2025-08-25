@@ -5,9 +5,11 @@ import { SentenceData, Sentence, isDateBasedContent, isCategoryContent, isDayCon
 import './styles/App.css';
 
 const App: React.FC = () => {
+  const [currentScreen, setCurrentScreen] = useState<'home' | 'recently' | 'integrated'>('home');
   const [availableFiles, setAvailableFiles] = useState<string[]>([]);
   const [pastMonths, setPastMonths] = useState<string[]>([]);
   const [presentMonths, setPresentMonths] = useState<string[]>([]);
+  const [integratedFiles, setIntegratedFiles] = useState<string[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     return localStorage.getItem('selectedMonth') || '2025-08';
   });
@@ -207,7 +209,7 @@ const App: React.FC = () => {
     return sections;
   }, [sentenceData, selectedDate, createContentSectionsForDay]);
 
-  // 과거 및 현재 월 목록 로드
+  // 과거 및 현재 월 목록 로드, 통합 파일 목록 로드
   useEffect(() => {
     const loadAllMonths = async () => {
       try {
@@ -246,7 +248,78 @@ const App: React.FC = () => {
         console.error('Error loading months:', err);
       }
     };
+    
+    const loadIntegratedFiles = () => {
+      // 통합 폴더의 파일 목록 (수동으로 설정)
+      const files = [
+        '01_초급반_제1-10과.txt',
+        '02_중급반_제11-25과.txt', 
+        '03_고급반_제26-40과.txt',
+        '04_실전회화_제41-50과.txt',
+        '05_패턴.txt',
+        '05_패턴_제1-90과.txt',
+        'reorganized_chinese_materials.txt',
+        '패런_원본.txt'
+      ];
+      setIntegratedFiles(files);
+      console.log('Integrated files loaded:', files);
+    };
+    
     loadAllMonths();
+    loadIntegratedFiles();
+  }, []);
+
+  // 통합 파일 로드 함수
+  const loadIntegratedFile = useCallback(async (fileName: string) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      // txt 파일을 import로 불러올 수 없으므로 임시로 빈 데이터 설정
+      console.log('Loading integrated file:', fileName);
+      
+      // TODO: 실제 파일 로딩 로직 구현 필요
+      // 임시로 빈 SentenceData 객체 생성
+      const mockData: SentenceData = {
+        month: '통합',
+        language: '중국어',
+        contents: []
+      };
+      
+      setSentenceData(mockData);
+      setIsDateBased(false);
+      localStorage.setItem('isDateBased', JSON.stringify(false));
+      
+      // 임시 문장 데이터 (실제 파일 파싱 후 교체 예정)
+      const mockSentences: Sentence[] = [
+        {
+          id: 1,
+          sentence: '你好',
+          'meaning-korean': '안녕하세요',
+          'meaning-english': 'Hello',
+          pinyin: 'nǐ hào',
+          words: [
+            {
+              chinese: '你好',
+              pinyin: 'nǐ hào',
+              korean: '안녕하세요',
+              english: 'hello',
+              type: 'greeting'
+            }
+          ]
+        }
+      ];
+      
+      setSentences(mockSentences);
+      setContentSections([]);
+      
+    } catch (err) {
+      console.error('Error loading integrated file:', err);
+      setError(err instanceof Error ? err.message : '통합 파일을 불러올 수 없습니다.');
+      setSentences([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // 페이지 로드 시 저장된 상태 복원
@@ -318,6 +391,7 @@ const App: React.FC = () => {
     setLastSelectedFolder('past');
     setLastSelectedMonth(month);
     await loadDataFromFolder('past', month);
+    setCurrentScreen('recently'); // Stay on recently screen to show study interface
   };
   
   // 현재 월 선택 핸들러
@@ -328,6 +402,7 @@ const App: React.FC = () => {
     setLastSelectedFolder('present');
     setLastSelectedMonth(month);
     await loadDataFromFolder('present', month);
+    setCurrentScreen('recently'); // Stay on recently screen to show study interface
   };
 
   // 카테고리 변경 핸들러
@@ -409,9 +484,149 @@ const App: React.FC = () => {
     );
   }
 
-  return (
-    <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+  // 홈 화면 렌더링
+  const renderHomeScreen = () => (
+    <div className="home-screen">
       <header className="app-header">
+        <h1 className="app-title">中文学习</h1>
+        <button 
+          className="dark-mode-toggle"
+          onClick={toggleDarkMode}
+          aria-label="다크 모드 토글"
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+      </header>
+      
+      <main className="main-content">
+        <div className="home-buttons">
+          <button 
+            className="data-source-button recently-button"
+            onClick={() => setCurrentScreen('recently')}
+          >
+            Recently
+            <span className="button-description">최근 학습 데이터</span>
+          </button>
+          
+          <button 
+            className="data-source-button integrated-button"
+            onClick={() => setCurrentScreen('integrated')}
+          >
+            Integrated  
+            <span className="button-description">통합 학습 데이터</span>
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+
+  // Recently 화면 렌더링
+  const renderRecentlyScreen = () => (
+    <div className="file-selection-screen">
+      <header className="app-header">
+        <button 
+          className="back-button"
+          onClick={() => setCurrentScreen('home')}
+        >
+          ← Back
+        </button>
+        <h1 className="app-title">Recently Files</h1>
+        <button 
+          className="dark-mode-toggle"
+          onClick={toggleDarkMode}
+          aria-label="다크 모드 토글"
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+      </header>
+      
+      <main className="main-content">
+        <div className="file-grid">
+          <div className="file-category">
+            <h2>Past Data</h2>
+            <div className="file-buttons">
+              {pastMonths.map((month) => (
+                <button
+                  key={month}
+                  className="file-button"
+                  onClick={() => handlePastMonthChange(month)}
+                >
+                  {month}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="file-category">
+            <h2>Present Data</h2>
+            <div className="file-buttons">
+              {presentMonths.map((month) => (
+                <button
+                  key={month}
+                  className="file-button"
+                  onClick={() => handlePresentMonthChange(month)}
+                >
+                  {month}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+
+  // Integrated 화면 렌더링
+  const renderIntegratedScreen = () => (
+    <div className="file-selection-screen">
+      <header className="app-header">
+        <button 
+          className="back-button"
+          onClick={() => setCurrentScreen('home')}
+        >
+          ← Back
+        </button>
+        <h1 className="app-title">Integrated Files</h1>
+        <button 
+          className="dark-mode-toggle"
+          onClick={toggleDarkMode}
+          aria-label="다크 모드 토글"
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+      </header>
+      
+      <main className="main-content">
+        <div className="file-grid">
+          <div className="file-category">
+            <h2>통합 학습 자료</h2>
+            <div className="file-buttons">
+              {integratedFiles.map((file) => (
+                <button
+                  key={file}
+                  className="file-button"
+                  onClick={() => loadIntegratedFile(file)}
+                >
+                  {file.replace('.txt', '').replace(/^\d+_/, '')}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+
+  // 학습 화면 렌더링
+  const renderStudyScreen = () => (
+    <div className="study-screen">
+      <header className="app-header">
+        <button 
+          className="back-button"
+          onClick={() => setCurrentScreen(lastSelectedFolder === 'past' || lastSelectedFolder === 'present' ? 'recently' : 'home')}
+        >
+          ← Back
+        </button>
         <h1 className="app-title">中文学习</h1>
         <button 
           className="dark-mode-toggle"
@@ -473,6 +688,32 @@ const App: React.FC = () => {
           )}
         </div>
       </main>
+    </div>
+  );
+
+  // 현재 화면에 따라 적절한 컴포넌트 렌더링
+  const renderCurrentScreen = () => {
+    if (currentScreen === 'home') {
+      return renderHomeScreen();
+    } else if (currentScreen === 'recently') {
+      // Recently 화면에서 데이터가 로드되면 study 화면 표시
+      if (sentenceData) {
+        return renderStudyScreen();
+      }
+      return renderRecentlyScreen();
+    } else if (currentScreen === 'integrated') {
+      // Integrated 화면에서 데이터가 로드되면 study 화면 표시
+      if (sentenceData) {
+        return renderStudyScreen();
+      }
+      return renderIntegratedScreen();
+    }
+    return renderHomeScreen();
+  };
+
+  return (
+    <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+      {renderCurrentScreen()}
     </div>
   );
 };

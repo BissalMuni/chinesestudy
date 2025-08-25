@@ -5,7 +5,11 @@
       "Bash(npm install)",
       "WebFetch(domain:github.com)",
       "Bash(npm install:*)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(python3:*)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(sed:*)"
     ],
     "defaultMode": "acceptEdits"
   }

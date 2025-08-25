@@ -1,0 +1,659 @@
+{
+    "month": "초급반",
+    "language": "chinese",
+    "contents": [
+        {
+            "day": 1,
+            "content": [
+                {
+                    "category": "제1과: 《认识一下》 인사와 소개",
+                    "subcategories": [
+                        {
+                            "subcategory": "첫 만남과 인사",
+                            "sentences": [
+                                {
+                                    "id": 1,
+                                    "sentence": "你好",
+                                    "pinyin": "nǐ hào",
+                                    "meaning-korean": "안녕하세요",
+                                    "meaning-english": "Hello",
+                                    "words": [
+                                        {
+                                            "chinese": "你好",
+                                            "pinyin": "nǐ hào",
+                                            "korean": "안녕하세요",
+                                            "english": "hello",
+                                            "type": "인사말"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 2,
+                                    "sentence": "你叫什么名字",
+                                    "pinyin": "nǐ jiào shénme míngzi",
+                                    "meaning-korean": "당신의 이름은 무엇입니까?",
+                                    "meaning-english": "What's your name?",
+                                    "words": [
+                                        {
+                                            "chinese": "你",
+                                            "pinyin": "nǐ",
+                                            "korean": "당신",
+                                            "english": "you",
+                                            "type": "대명사"
+                                        },
+                                        {
+                                            "chinese": "叫",
+                                            "pinyin": "jiào",
+                                            "korean": "부르다, 이름이다",
+                                            "english": "call, be named",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "什么",
+                                            "pinyin": "shénme",
+                                            "korean": "무엇",
+                                            "english": "what",
+                                            "type": "의문사"
+                                        },
+                                        {
+                                            "chinese": "名字",
+                                            "pinyin": "míngzi",
+                                            "korean": "이름",
+                                            "english": "name",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 3,
+                                    "sentence": "我叫李钟文",
+                                    "pinyin": "wǒ jiào lǐ zhōngwén",
+                                    "meaning-korean": "저는 이종문입니다",
+                                    "meaning-english": "My name is Li Zhongwen",
+                                    "words": [
+                                        {
+                                            "chinese": "我",
+                                            "pinyin": "wǒ",
+                                            "korean": "나",
+                                            "english": "I, me",
+                                            "type": "대명사"
+                                        },
+                                        {
+                                            "chinese": "李钟文",
+                                            "pinyin": "lǐ zhōngwén",
+                                            "korean": "이종문",
+                                            "english": "Li Zhongwen",
+                                            "type": "고유명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 4,
+                                    "sentence": "请问，你是哪国人",
+                                    "pinyin": "qǐng wèn, nǐ shì nǎ guó rén",
+                                    "meaning-korean": "실례지만, 어느 나라 사람이십니까?",
+                                    "meaning-english": "Excuse me, which country are you from?",
+                                    "words": [
+                                        {
+                                            "chinese": "请问",
+                                            "pinyin": "qǐng wèn",
+                                            "korean": "실례지만",
+                                            "english": "excuse me, may I ask",
+                                            "type": "관용어"
+                                        },
+                                        {
+                                            "chinese": "是",
+                                            "pinyin": "shì",
+                                            "korean": "이다",
+                                            "english": "be, is",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "哪",
+                                            "pinyin": "nǎ",
+                                            "korean": "어느",
+                                            "english": "which",
+                                            "type": "의문사"
+                                        },
+                                        {
+                                            "chinese": "国人",
+                                            "pinyin": "guó rén",
+                                            "korean": "나라 사람",
+                                            "english": "nationality, person from a country",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "subcategory": "추측과 확인",
+                            "sentences": [
+                                {
+                                    "id": 5,
+                                    "sentence": "你猜猜",
+                                    "pinyin": "nǐ cāi cai",
+                                    "meaning-korean": "맞춰보세요",
+                                    "meaning-english": "Guess",
+                                    "words": [
+                                        {
+                                            "chinese": "猜猜",
+                                            "pinyin": "cāi cai",
+                                            "korean": "맞추다, 추측하다",
+                                            "english": "guess",
+                                            "type": "동사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 6,
+                                    "sentence": "我猜你一定是韩国人",
+                                    "pinyin": "wǒ cāi nǐ yīdìng shì hánguó rén",
+                                    "meaning-korean": "당신은 틀림없이 한국 사람일 거예요",
+                                    "meaning-english": "I guess you must be Korean",
+                                    "words": [
+                                        {
+                                            "chinese": "猜",
+                                            "pinyin": "cāi",
+                                            "korean": "추측하다",
+                                            "english": "guess",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "一定",
+                                            "pinyin": "yīdìng",
+                                            "korean": "반드시, 틀림없이",
+                                            "english": "certainly, definitely",
+                                            "type": "부사"
+                                        },
+                                        {
+                                            "chinese": "韩国人",
+                                            "pinyin": "hánguó rén",
+                                            "korean": "한국 사람",
+                                            "english": "Korean person",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 7,
+                                    "sentence": "猜对了",
+                                    "pinyin": "cāi duì le",
+                                    "meaning-korean": "맞췄어요",
+                                    "meaning-english": "Guessed correctly",
+                                    "words": [
+                                        {
+                                            "chinese": "对",
+                                            "pinyin": "duì",
+                                            "korean": "맞다",
+                                            "english": "correct, right",
+                                            "type": "형용사"
+                                        },
+                                        {
+                                            "chinese": "了",
+                                            "pinyin": "le",
+                                            "korean": "완료 어기조사",
+                                            "english": "completion particle",
+                                            "type": "조사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 8,
+                                    "sentence": "你真聪明",
+                                    "pinyin": "nǐ zhēn cōngming",
+                                    "meaning-korean": "당신은 정말 똑똑해요",
+                                    "meaning-english": "You're really smart",
+                                    "words": [
+                                        {
+                                            "chinese": "真",
+                                            "pinyin": "zhēn",
+                                            "korean": "정말",
+                                            "english": "really, truly",
+                                            "type": "부사"
+                                        },
+                                        {
+                                            "chinese": "聪明",
+                                            "pinyin": "cōngming",
+                                            "korean": "똑똑하다",
+                                            "english": "smart, clever",
+                                            "type": "형용사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "subcategory": "신분과 직업",
+                            "sentences": [
+                                {
+                                    "id": 9,
+                                    "sentence": "我叫飞龙，法国人，是大学生",
+                                    "pinyin": "wǒ jiào fēilóng, fǎguó rén, shì dàxuéshēng",
+                                    "meaning-korean": "저는 비룡이고, 프랑스 사람이며, 대학생입니다",
+                                    "meaning-english": "My name is Feilong, I'm French, and I'm a university student",
+                                    "words": [
+                                        {
+                                            "chinese": "飞龙",
+                                            "pinyin": "fēilóng",
+                                            "korean": "비룡",
+                                            "english": "Feilong",
+                                            "type": "고유명사"
+                                        },
+                                        {
+                                            "chinese": "法国人",
+                                            "pinyin": "fǎguó rén",
+                                            "korean": "프랑스 사람",
+                                            "english": "French person",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "大学生",
+                                            "pinyin": "dàxuéshēng",
+                                            "korean": "대학생",
+                                            "english": "university student",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 10,
+                                    "sentence": "他做什么工作",
+                                    "pinyin": "tā zuò shénme gōngzuò",
+                                    "meaning-korean": "그는 무슨 일을 하십니까?",
+                                    "meaning-english": "What work does he do?",
+                                    "words": [
+                                        {
+                                            "chinese": "他",
+                                            "pinyin": "tā",
+                                            "korean": "그",
+                                            "english": "he, him",
+                                            "type": "대명사"
+                                        },
+                                        {
+                                            "chinese": "做",
+                                            "pinyin": "zuò",
+                                            "korean": "하다",
+                                            "english": "do, work",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "工作",
+                                            "pinyin": "gōngzuò",
+                                            "korean": "일, 직업",
+                                            "english": "work, job",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 11,
+                                    "sentence": "他是大夫",
+                                    "pinyin": "tā shì dàifū",
+                                    "meaning-korean": "그는 의사입니다",
+                                    "meaning-english": "He is a doctor",
+                                    "words": [
+                                        {
+                                            "chinese": "大夫",
+                                            "pinyin": "dàifū",
+                                            "korean": "의사",
+                                            "english": "doctor",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 12,
+                                    "sentence": "我是记者",
+                                    "pinyin": "wǒ shì jìzhě",
+                                    "meaning-korean": "저는 기자입니다",
+                                    "meaning-english": "I am a journalist",
+                                    "words": [
+                                        {
+                                            "chinese": "记者",
+                                            "pinyin": "jìzhě",
+                                            "korean": "기자",
+                                            "english": "journalist",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "day": 2,
+            "content": [
+                {
+                    "category": "제2과: 《吃点什么》 일상 생활",
+                    "subcategories": [
+                        {
+                            "subcategory": "음식점과 메뉴",
+                            "sentences": [
+                                {
+                                    "id": 13,
+                                    "sentence": "这家饭馆的菜又好吃又便宜",
+                                    "pinyin": "zhè jiā fànguǎn de cài yòu hàochī yòu piányi",
+                                    "meaning-korean": "이 식당의 음식은 맛있고 또 싸요",
+                                    "meaning-english": "This restaurant's food is both delicious and cheap",
+                                    "words": [
+                                        {
+                                            "chinese": "这家",
+                                            "pinyin": "zhè jiā",
+                                            "korean": "이 집",
+                                            "english": "this (restaurant/shop)",
+                                            "type": "지시어"
+                                        },
+                                        {
+                                            "chinese": "饭馆",
+                                            "pinyin": "fànguǎn",
+                                            "korean": "식당",
+                                            "english": "restaurant",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "菜",
+                                            "pinyin": "cài",
+                                            "korean": "음식, 채소",
+                                            "english": "dish, food",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "又...又...",
+                                            "pinyin": "yòu...yòu...",
+                                            "korean": "...하면서 또 ...하다",
+                                            "english": "both...and...",
+                                            "type": "부사 구조"
+                                        },
+                                        {
+                                            "chinese": "好吃",
+                                            "pinyin": "hàochī",
+                                            "korean": "맛있다",
+                                            "english": "delicious",
+                                            "type": "형용사"
+                                        },
+                                        {
+                                            "chinese": "便宜",
+                                            "pinyin": "piányi",
+                                            "korean": "싸다",
+                                            "english": "cheap",
+                                            "type": "형용사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 14,
+                                    "sentence": "这是菜谱，你们喜欢吃什么",
+                                    "pinyin": "zhè shì càipǔ, nǐmen xǐhuan chī shénme",
+                                    "meaning-korean": "이것은 메뉴입니다. 무엇을 드시고 싶으세요?",
+                                    "meaning-english": "This is the menu, what would you like to eat?",
+                                    "words": [
+                                        {
+                                            "chinese": "菜谱",
+                                            "pinyin": "càipǔ",
+                                            "korean": "메뉴",
+                                            "english": "menu",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "你们",
+                                            "pinyin": "nǐmen",
+                                            "korean": "당신들",
+                                            "english": "you (plural)",
+                                            "type": "대명사"
+                                        },
+                                        {
+                                            "chinese": "喜欢",
+                                            "pinyin": "xǐhuan",
+                                            "korean": "좋아하다",
+                                            "english": "like",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "吃",
+                                            "pinyin": "chī",
+                                            "korean": "먹다",
+                                            "english": "eat",
+                                            "type": "동사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "subcategory": "음식 주문",
+                            "sentences": [
+                                {
+                                    "id": 15,
+                                    "sentence": "你要什么",
+                                    "pinyin": "nǐ yào shénme",
+                                    "meaning-korean": "무엇을 드릴까요?",
+                                    "meaning-english": "What would you like?",
+                                    "words": [
+                                        {
+                                            "chinese": "要",
+                                            "pinyin": "yào",
+                                            "korean": "원하다, 주문하다",
+                                            "english": "want, order",
+                                            "type": "동사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 16,
+                                    "sentence": "我要一碗米饭",
+                                    "pinyin": "wǒ yào yī wǎn mǐfàn",
+                                    "meaning-korean": "밥 한 그릇 주세요",
+                                    "meaning-english": "I want a bowl of rice",
+                                    "words": [
+                                        {
+                                            "chinese": "一碗",
+                                            "pinyin": "yī wǎn",
+                                            "korean": "한 그릇",
+                                            "english": "one bowl",
+                                            "type": "수량사"
+                                        },
+                                        {
+                                            "chinese": "米饭",
+                                            "pinyin": "mǐfàn",
+                                            "korean": "밥",
+                                            "english": "rice",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 17,
+                                    "sentence": "来一杯茶",
+                                    "pinyin": "lái yī bēi chá",
+                                    "meaning-korean": "차 한 잔 주세요",
+                                    "meaning-english": "Bring a cup of tea",
+                                    "words": [
+                                        {
+                                            "chinese": "来",
+                                            "pinyin": "lái",
+                                            "korean": "가져오다, 주세요",
+                                            "english": "bring, come",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "一杯",
+                                            "pinyin": "yī bēi",
+                                            "korean": "한 잔",
+                                            "english": "one cup",
+                                            "type": "수량사"
+                                        },
+                                        {
+                                            "chinese": "茶",
+                                            "pinyin": "chá",
+                                            "korean": "차",
+                                            "english": "tea",
+                                            "type": "명사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "day": 3,
+            "content": [
+                {
+                    "category": "제3과: 《在校园里》 교육과 학습",
+                    "subcategories": [
+                        {
+                            "subcategory": "학교 생활",
+                            "sentences": [
+                                {
+                                    "id": 18,
+                                    "sentence": "学校离这儿不远",
+                                    "pinyin": "xuéxiào lí zhèr bù yuǎn",
+                                    "meaning-korean": "학교가 여기서 멀지 않아요",
+                                    "meaning-english": "The school is not far from here",
+                                    "words": [
+                                        {
+                                            "chinese": "学校",
+                                            "pinyin": "xuéxiào",
+                                            "korean": "학교",
+                                            "english": "school",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "离",
+                                            "pinyin": "lí",
+                                            "korean": "떨어져 있다",
+                                            "english": "away from, distance",
+                                            "type": "전치사"
+                                        },
+                                        {
+                                            "chinese": "这儿",
+                                            "pinyin": "zhèr",
+                                            "korean": "여기",
+                                            "english": "here",
+                                            "type": "지시어"
+                                        },
+                                        {
+                                            "chinese": "不远",
+                                            "pinyin": "bù yuǎn",
+                                            "korean": "멀지 않다",
+                                            "english": "not far",
+                                            "type": "형용사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 19,
+                                    "sentence": "教学楼在哪儿",
+                                    "pinyin": "jiàoxué lóu zài nǎr",
+                                    "meaning-korean": "교육관이 어디에 있어요?",
+                                    "meaning-english": "Where is the teaching building?",
+                                    "words": [
+                                        {
+                                            "chinese": "教学楼",
+                                            "pinyin": "jiàoxué lóu",
+                                            "korean": "교육관",
+                                            "english": "teaching building",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "在",
+                                            "pinyin": "zài",
+                                            "korean": "있다",
+                                            "english": "be at, located",
+                                            "type": "동사"
+                                        },
+                                        {
+                                            "chinese": "哪儿",
+                                            "pinyin": "nǎr",
+                                            "korean": "어디",
+                                            "english": "where",
+                                            "type": "의문사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "subcategory": "위치와 방향",
+                            "sentences": [
+                                {
+                                    "id": 20,
+                                    "sentence": "银行在图书馆对面",
+                                    "pinyin": "yínháng zài túshūguǎn duìmiàn",
+                                    "meaning-korean": "은행은 도서관 맞은편에 있어요",
+                                    "meaning-english": "The bank is across from the library",
+                                    "words": [
+                                        {
+                                            "chinese": "银行",
+                                            "pinyin": "yínháng",
+                                            "korean": "은행",
+                                            "english": "bank",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "图书馆",
+                                            "pinyin": "túshūguǎn",
+                                            "korean": "도서관",
+                                            "english": "library",
+                                            "type": "명사"
+                                        },
+                                        {
+                                            "chinese": "对面",
+                                            "pinyin": "duìmiàn",
+                                            "korean": "맞은편",
+                                            "english": "opposite, across from",
+                                            "type": "방위사"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 21,
+                                    "sentence": "从这儿往右拐",
+                                    "pinyin": "cóng zhèr wǎng yòu guǎi",
+                                    "meaning-korean": "여기서 오른쪽으로 도세요",
+                                    "meaning-english": "Turn right from here",
+                                    "words": [
+                                        {
+                                            "chinese": "从",
+                                            "pinyin": "cóng",
+                                            "korean": "~에서부터",
+                                            "english": "from",
+                                            "type": "전치사"
+                                        },
+                                        {
+                                            "chinese": "往",
+                                            "pinyin": "wǎng",
+                                            "korean": "~쪽으로",
+                                            "english": "towards",
+                                            "type": "전치사"
+                                        },
+                                        {
+                                            "chinese": "右",
+                                            "pinyin": "yòu",
+                                            "korean": "오른쪽",
+                                            "english": "right",
+                                            "type": "방위사"
+                                        },
+                                        {
+                                            "chinese": "拐",
+                                            "pinyin": "guǎi",
+                                            "korean": "돌다",
+                                            "english": "turn",
+                                            "type": "동사"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
