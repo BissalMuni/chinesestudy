@@ -913,12 +913,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   height: 100%;
 }
 
 .main-sentence {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 600;
   color: #2c3e50;
   line-height: 1.1;
@@ -931,6 +931,7 @@ body {
   justify-content: center;
   cursor: pointer;
   padding-top: 20px;
+  margin-top: 30px;
   transition: color 0.3s ease;
 }
 
@@ -947,24 +948,59 @@ body {
 }
 
 .translation-pinyin {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: #e74c3c;
   margin: 10px 0;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.translation-pinyin:hover {
+  transform: scale(1.05);
+  text-shadow: 2px 2px 4px rgba(231, 76, 60, 0.3);
 }
 
 .translation-korean {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #27ae60;
   margin: 10px 0;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.translation-korean:hover {
+  transform: scale(1.05);
+  text-shadow: 2px 2px 4px rgba(39, 174, 96, 0.3);
 }
 
 .translation-english {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   color: #8e44ad;
   margin: 10px 0;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.translation-english:hover {
+  transform: scale(1.05);
+  text-shadow: 2px 2px 4px rgba(142, 68, 173, 0.3);
+}
+
+.sentence-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 20px;
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.sentence-controls .tts-button-center {
+  margin: 0 auto;
 }
 
 .translations-display {

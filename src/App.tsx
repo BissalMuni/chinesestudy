@@ -409,23 +409,54 @@ function App() {
                       {showTranslations && (
                         <div className="sentence-translations">
                           {allSentences[currentSentenceIndex]?.pinyin && (
-                            <p className="translation-pinyin">{allSentences[currentSentenceIndex]?.pinyin}</p>
+                            <p 
+                              className="translation-pinyin"
+                              onClick={() => playAudio(allSentences[currentSentenceIndex]?.sentence, 'chinese')}
+                            >
+                              {allSentences[currentSentenceIndex]?.pinyin}
+                            </p>
                           )}
                           {allSentences[currentSentenceIndex]?.korean && (
-                            <p className="translation-korean">{allSentences[currentSentenceIndex]?.korean}</p>
+                            <p 
+                              className="translation-korean"
+                              onClick={() => playAudio(allSentences[currentSentenceIndex]?.korean, 'korean')}
+                            >
+                              {allSentences[currentSentenceIndex]?.korean}
+                            </p>
                           )}
                           {allSentences[currentSentenceIndex]?.english && (
-                            <p className="translation-english">{allSentences[currentSentenceIndex]?.english}</p>
+                            <p 
+                              className="translation-english"
+                              onClick={() => playAudio(allSentences[currentSentenceIndex]?.english, 'english')}
+                            >
+                              {allSentences[currentSentenceIndex]?.english}
+                            </p>
                           )}
                         </div>
                       )}
-                      <button
-                        className="tts-button-center"
-                        onClick={() => playAudio(allSentences[currentSentenceIndex]?.sentence, 'chinese')}
-                        title="중국어 음성 재생"
-                      >
-                        🔊
-                      </button>
+                      <div className="sentence-controls">
+                        <button
+                          onClick={() => setCurrentSentenceIndex(Math.max(0, currentSentenceIndex - 1))}
+                          className={`control-btn ${currentSentenceIndex === 0 ? 'disabled' : ''}`}
+                          disabled={currentSentenceIndex === 0}
+                        >
+                          ◀️
+                        </button>
+                        <button
+                          className="tts-button-center"
+                          onClick={() => playAudio(allSentences[currentSentenceIndex]?.sentence, 'chinese')}
+                          title="중국어 음성 재생"
+                        >
+                          🔊
+                        </button>
+                        <button
+                          onClick={() => setCurrentSentenceIndex(Math.min(allSentences.length - 1, currentSentenceIndex + 1))}
+                          className={`control-btn ${currentSentenceIndex >= allSentences.length - 1 ? 'disabled' : ''}`}
+                          disabled={currentSentenceIndex >= allSentences.length - 1}
+                        >
+                          ▶️
+                        </button>
+                      </div>
                     </div>
                   )}
 
