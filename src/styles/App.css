@@ -932,7 +932,7 @@ body {
   justify-content: center;
   cursor: pointer;
   padding-top: 20px;
-  margin-top: 30px;
+  /* margin-top: 10px; */
   transition: color 0.3s ease;
 }
 
