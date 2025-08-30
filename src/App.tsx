@@ -37,6 +37,9 @@ function App() {
     const savedViewMode = localStorage.getItem('chineseStudy_viewMode');
     const savedDataCategory = localStorage.getItem('chineseStudy_dataCategory');
     const savedSelectedType = localStorage.getItem('chineseStudy_selectedType');
+    const savedSelectedLesson = localStorage.getItem('chineseStudy_selectedLesson');
+    const savedLessonData = localStorage.getItem('chineseStudy_lessonData');
+    const savedAllSentences = localStorage.getItem('chineseStudy_allSentences');
     const savedCurrentSentenceIndex = localStorage.getItem('chineseStudy_currentSentenceIndex');
     const savedDisplayMode = localStorage.getItem('chineseStudy_displayMode');
 
@@ -44,6 +47,27 @@ function App() {
     if (savedViewMode) setViewMode(savedViewMode as ViewMode);
     if (savedDataCategory) setDataCategory(savedDataCategory as DataCategory);
     if (savedSelectedType) setSelectedType(savedSelectedType as IntegratedType | CurrentlyType);
+    if (savedSelectedLesson) {
+      try {
+        setSelectedLesson(JSON.parse(savedSelectedLesson));
+      } catch (error) {
+        console.error('Failed to parse savedSelectedLesson:', error);
+      }
+    }
+    if (savedLessonData) {
+      try {
+        setLessonData(JSON.parse(savedLessonData));
+      } catch (error) {
+        console.error('Failed to parse savedLessonData:', error);
+      }
+    }
+    if (savedAllSentences) {
+      try {
+        setAllSentences(JSON.parse(savedAllSentences));
+      } catch (error) {
+        console.error('Failed to parse savedAllSentences:', error);
+      }
+    }
     if (savedCurrentSentenceIndex) setCurrentSentenceIndex(parseInt(savedCurrentSentenceIndex));
     if (savedDisplayMode) setDisplayMode(savedDisplayMode as DisplayMode);
   }, []);
@@ -72,6 +96,38 @@ function App() {
   useEffect(() => {
     localStorage.setItem('chineseStudy_displayMode', displayMode);
   }, [displayMode]);
+
+  useEffect(() => {
+    if (selectedLesson) {
+      localStorage.setItem('chineseStudy_selectedLesson', JSON.stringify(selectedLesson));
+    } else {
+      localStorage.removeItem('chineseStudy_selectedLesson');
+    }
+  }, [selectedLesson]);
+
+  useEffect(() => {
+    if (lessonData) {
+      localStorage.setItem('chineseStudy_lessonData', JSON.stringify(lessonData));
+    } else {
+      localStorage.removeItem('chineseStudy_lessonData');
+    }
+  }, [lessonData]);
+
+  useEffect(() => {
+    if (allSentences.length > 0) {
+      localStorage.setItem('chineseStudy_allSentences', JSON.stringify(allSentences));
+    } else {
+      localStorage.removeItem('chineseStudy_allSentences');
+    }
+  }, [allSentences]);
+
+  // Auto-load data when selectedType changes (including localStorage restoration)
+  useEffect(() => {
+    if (selectedType && !selectedLesson && !lessonData) {
+      loadLessonData(selectedType);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedType, selectedLesson, lessonData]);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -109,12 +165,33 @@ function App() {
     if (selectedLesson) {
       setSelectedLesson(null);
       setDisplayMode('chinese');
+      // Clear lesson-related localStorage
+      localStorage.removeItem('chineseStudy_selectedLesson');
+      localStorage.removeItem('chineseStudy_allSentences');
     } else if (selectedType) {
       setSelectedType(null);
+      setLessonData(null);
+      // Clear type-related localStorage
+      localStorage.removeItem('chineseStudy_selectedType');
+      localStorage.removeItem('chineseStudy_lessonData');
     } else if (dataCategory) {
       setDataCategory(null);
+      // Clear category-related localStorage
+      localStorage.removeItem('chineseStudy_dataCategory');
     } else if (viewMode) {
+      // Clear all localStorage when going back to main screen
+      localStorage.removeItem('chineseStudy_viewMode');
+      localStorage.removeItem('chineseStudy_dataCategory');
+      localStorage.removeItem('chineseStudy_selectedType');
+      localStorage.removeItem('chineseStudy_selectedLesson');
+      localStorage.removeItem('chineseStudy_lessonData');
+      localStorage.removeItem('chineseStudy_allSentences');
       setViewMode(null);
+      setDataCategory(null);
+      setSelectedType(null);
+      setSelectedLesson(null);
+      setLessonData(null);
+      setAllSentences([]);
     }
   };
 

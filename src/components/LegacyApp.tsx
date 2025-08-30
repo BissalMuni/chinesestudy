@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Navigation from './Navigation';
 import SentenceCard from './SentenceCard';
 import { SentenceData, ContentSection, isDateBasedContent, isCategoryContent, isDayContent } from '../types';
@@ -20,6 +20,64 @@ const LegacyApp: React.FC<LegacyAppProps> = ({ onBackClick, isDarkMode }) => {
   const [lastSelectedMonth, setLastSelectedMonth] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const initializedRef = useRef<boolean>(false);
+
+  // Define callback functions first
+  const loadMonthData = useCallback(async (month: string, folder: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/data/${folder}/${month}.json`);
+      if (!response.ok) {
+        throw new Error(`Failed to load data for ${month}`);
+      }
+      
+      const data: SentenceData = await response.json();
+      setSentenceData(data);
+      
+      // Extract available dates
+      const dates: string[] = [];
+      data.contents.forEach(content => {
+        if (isDateBasedContent(content)) {
+          dates.push(content.date);
+        } else if (isDayContent(content)) {
+          // Keep month format as-is for date generation
+          dates.push(`${month}-${String(content.day).padStart(2, '0')}`);
+        }
+      });
+      
+      console.log('Extracted dates:', dates);
+      setAvailableDates(dates.sort());
+      
+      // Set first available date as selected
+      if (dates.length > 0) {
+        console.log('Setting selected date to:', dates[0]);
+        setSelectedDate(dates[0]);
+      }
+      
+      setSelectedCategory('전체');
+    } catch (error) {
+      console.error('Error loading month data:', error);
+      setError(`Failed to load data for ${month}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handlePastMonthChange = useCallback(async (month: string) => {
+    await loadMonthData(month, 'past');
+    setSelectedMonth(month);
+    setLastSelectedFolder('past');
+    setLastSelectedMonth(month);
+  }, [loadMonthData]);
+
+  const handlePresentMonthChange = useCallback(async (month: string) => {
+    await loadMonthData(month, 'present');
+    setSelectedMonth(month);
+    setLastSelectedFolder('present');
+    setLastSelectedMonth(month);
+  }, [loadMonthData]);
 
   // Initialize component - load available months
   useEffect(() => {
@@ -52,71 +110,29 @@ const LegacyApp: React.FC<LegacyAppProps> = ({ onBackClick, isDarkMode }) => {
 
   // Set default month when months are loaded
   useEffect(() => {
-    if (presentMonths.length > 0 && !selectedMonth) {
-      const latestMonth = [...presentMonths].sort().pop() || '';
-      setSelectedMonth(latestMonth);
-      handlePresentMonthChange(latestMonth);
-    } else if (pastMonths.length > 0 && presentMonths.length === 0 && !selectedMonth) {
-      const latestMonth = [...pastMonths].sort().pop() || '';
-      setSelectedMonth(latestMonth);
-      handlePastMonthChange(latestMonth);
-    }
-  }, [presentMonths, pastMonths, selectedMonth, handlePastMonthChange, handlePresentMonthChange]);
-
-  const handlePastMonthChange = useCallback(async (month: string) => {
-    await loadMonthData(month, 'past');
-    setLastSelectedFolder('past');
-    setLastSelectedMonth(month);
-  }, [loadMonthData]);
-
-  const handlePresentMonthChange = useCallback(async (month: string) => {
-    await loadMonthData(month, 'present');
-    setLastSelectedFolder('present');
-    setLastSelectedMonth(month);
-  }, [loadMonthData]);
-
-  const loadMonthData = useCallback(async (month: string, folder: string) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(`/data/${folder}/${month}.json`);
-      if (!response.ok) {
-        throw new Error(`Failed to load data for ${month}`);
-      }
-      
-      const data: SentenceData = await response.json();
-      setSentenceData(data);
-      setSelectedMonth(month);
-      
-      // Extract available dates
-      const dates: string[] = [];
-      data.contents.forEach(content => {
-        if (isDateBasedContent(content)) {
-          dates.push(content.date);
-        } else if (isDayContent(content)) {
-          // Keep month format as-is for date generation
-          dates.push(`${month}-${String(content.day).padStart(2, '0')}`);
+    const initializeDefaultMonth = async () => {
+      if (!initializedRef.current && !loading && (presentMonths.length > 0 || pastMonths.length > 0) && !selectedMonth) {
+        initializedRef.current = true;
+        
+        if (presentMonths.length > 0) {
+          const latestMonth = [...presentMonths].sort().pop() || '';
+          setSelectedMonth(latestMonth);
+          setLastSelectedFolder('present');
+          setLastSelectedMonth(latestMonth);
+          await loadMonthData(latestMonth, 'present');
+        } else if (pastMonths.length > 0) {
+          const latestMonth = [...pastMonths].sort().pop() || '';
+          setSelectedMonth(latestMonth);
+          setLastSelectedFolder('past');
+          setLastSelectedMonth(latestMonth);
+          await loadMonthData(latestMonth, 'past');
         }
-      });
-      
-      console.log('Extracted dates:', dates);
-      setAvailableDates(dates.sort());
-      
-      // Set first available date as selected
-      if (dates.length > 0) {
-        console.log('Setting selected date to:', dates[0]);
-        setSelectedDate(dates[0]);
       }
-      
-      setSelectedCategory('전체');
-    } catch (error) {
-      console.error('Error loading month data:', error);
-      setError(`Failed to load data for ${month}`);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    };
+
+    initializeDefaultMonth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presentMonths, pastMonths, selectedMonth, loading]);
 
   const handleMonthChange = (month: string) => {
     if (pastMonths.includes(month)) {
