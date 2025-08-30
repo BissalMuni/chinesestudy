@@ -25,6 +25,7 @@ function App() {
   const [dataCategory, setDataCategory] = useState<DataCategory | null>(null);
   const [selectedType, setSelectedType] = useState<IntegratedType | CurrentlyType | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<LessonData[] | null>(null);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [displayMode, setDisplayMode] = useState<DisplayMode>('chinese');
   const [lessonData, setLessonData] = useState<any>(null);
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState<number>(0);
@@ -36,40 +37,30 @@ function App() {
     const savedDarkMode = localStorage.getItem('chineseStudy_darkMode');
     const savedViewMode = localStorage.getItem('chineseStudy_viewMode');
     const savedDataCategory = localStorage.getItem('chineseStudy_dataCategory');
+    
+    // 통합된 localStorage 변수 사용
     const savedSelectedType = localStorage.getItem('chineseStudy_selectedType');
-    const savedSelectedLesson = localStorage.getItem('chineseStudy_selectedLesson');
-    const savedLessonData = localStorage.getItem('chineseStudy_lessonData');
-    const savedAllSentences = localStorage.getItem('chineseStudy_allSentences');
+    const savedSelectedLessonId = localStorage.getItem('chineseStudy_selectedLessonId');
     const savedCurrentSentenceIndex = localStorage.getItem('chineseStudy_currentSentenceIndex');
     const savedDisplayMode = localStorage.getItem('chineseStudy_displayMode');
 
     if (savedDarkMode) setIsDarkMode(savedDarkMode === 'true');
     if (savedViewMode) setViewMode(savedViewMode as ViewMode);
-    if (savedDataCategory) setDataCategory(savedDataCategory as DataCategory);
-    if (savedSelectedType) setSelectedType(savedSelectedType as IntegratedType | CurrentlyType);
-    if (savedSelectedLesson) {
-      try {
-        setSelectedLesson(JSON.parse(savedSelectedLesson));
-      } catch (error) {
-        console.error('Failed to parse savedSelectedLesson:', error);
+    if (savedDataCategory) {
+      setDataCategory(savedDataCategory as DataCategory);
+      
+      // 카테고리에 상관없이 통일된 변수로 상태 복원
+      if (savedSelectedType) {
+        if (savedDataCategory === 'currently') {
+          setSelectedType(savedSelectedType as CurrentlyType);
+        } else if (savedDataCategory === 'integrated') {
+          setSelectedType(savedSelectedType as IntegratedType);
+        }
       }
+      if (savedSelectedLessonId) setSelectedLessonId(savedSelectedLessonId);
+      if (savedCurrentSentenceIndex) setCurrentSentenceIndex(parseInt(savedCurrentSentenceIndex));
+      if (savedDisplayMode) setDisplayMode(savedDisplayMode as DisplayMode);
     }
-    if (savedLessonData) {
-      try {
-        setLessonData(JSON.parse(savedLessonData));
-      } catch (error) {
-        console.error('Failed to parse savedLessonData:', error);
-      }
-    }
-    if (savedAllSentences) {
-      try {
-        setAllSentences(JSON.parse(savedAllSentences));
-      } catch (error) {
-        console.error('Failed to parse savedAllSentences:', error);
-      }
-    }
-    if (savedCurrentSentenceIndex) setCurrentSentenceIndex(parseInt(savedCurrentSentenceIndex));
-    if (savedDisplayMode) setDisplayMode(savedDisplayMode as DisplayMode);
   }, []);
 
   // 상태 변경시 localStorage에 저장
@@ -85,10 +76,8 @@ function App() {
     if (dataCategory) localStorage.setItem('chineseStudy_dataCategory', dataCategory);
   }, [dataCategory]);
 
-  useEffect(() => {
-    if (selectedType) localStorage.setItem('chineseStudy_selectedType', selectedType);
-  }, [selectedType]);
 
+  // 통합된 상태 저장
   useEffect(() => {
     localStorage.setItem('chineseStudy_currentSentenceIndex', currentSentenceIndex.toString());
   }, [currentSentenceIndex]);
@@ -97,37 +86,40 @@ function App() {
     localStorage.setItem('chineseStudy_displayMode', displayMode);
   }, [displayMode]);
 
+  // selectedLessonId localStorage에 저장
   useEffect(() => {
-    if (selectedLesson) {
-      localStorage.setItem('chineseStudy_selectedLesson', JSON.stringify(selectedLesson));
+    if (selectedLessonId) {
+      localStorage.setItem('chineseStudy_selectedLessonId', selectedLessonId);
     } else {
-      localStorage.removeItem('chineseStudy_selectedLesson');
+      localStorage.removeItem('chineseStudy_selectedLessonId');
     }
-  }, [selectedLesson]);
+  }, [selectedLessonId]);
+
+  // lessonData와 allSentences는 localStorage에 저장하지 않음
 
   useEffect(() => {
-    if (lessonData) {
-      localStorage.setItem('chineseStudy_lessonData', JSON.stringify(lessonData));
+    if (selectedType) {
+      localStorage.setItem('chineseStudy_selectedType', selectedType);
     } else {
-      localStorage.removeItem('chineseStudy_lessonData');
+      localStorage.removeItem('chineseStudy_selectedType');
     }
-  }, [lessonData]);
+  }, [selectedType]);
 
+  // Load data when selectedType exists but lessonData doesn't (for localStorage restoration)
   useEffect(() => {
-    if (allSentences.length > 0) {
-      localStorage.setItem('chineseStudy_allSentences', JSON.stringify(allSentences));
-    } else {
-      localStorage.removeItem('chineseStudy_allSentences');
-    }
-  }, [allSentences]);
-
-  // Auto-load data when selectedType changes (including localStorage restoration)
-  useEffect(() => {
-    if (selectedType && !selectedLesson && !lessonData) {
+    if (selectedType && !lessonData) {
       loadLessonData(selectedType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedType, selectedLesson, lessonData]);
+  }, [selectedType]);
+
+  // Restore lesson when lessonData is loaded and selectedLessonId exists
+  useEffect(() => {
+    if (lessonData && selectedLessonId && !selectedLesson) {
+      selectLesson(selectedLessonId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonData, selectedLessonId]);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -164,16 +156,15 @@ function App() {
   const goBack = () => {
     if (selectedLesson) {
       setSelectedLesson(null);
+      setSelectedLessonId(null);
       setDisplayMode('chinese');
       // Clear lesson-related localStorage
-      localStorage.removeItem('chineseStudy_selectedLesson');
-      localStorage.removeItem('chineseStudy_allSentences');
+      localStorage.removeItem('chineseStudy_selectedLessonId');
     } else if (selectedType) {
       setSelectedType(null);
       setLessonData(null);
       // Clear type-related localStorage
       localStorage.removeItem('chineseStudy_selectedType');
-      localStorage.removeItem('chineseStudy_lessonData');
     } else if (dataCategory) {
       setDataCategory(null);
       // Clear category-related localStorage
@@ -182,10 +173,11 @@ function App() {
       // Clear all localStorage when going back to main screen
       localStorage.removeItem('chineseStudy_viewMode');
       localStorage.removeItem('chineseStudy_dataCategory');
+      // Clear unified localStorage
       localStorage.removeItem('chineseStudy_selectedType');
-      localStorage.removeItem('chineseStudy_selectedLesson');
-      localStorage.removeItem('chineseStudy_lessonData');
-      localStorage.removeItem('chineseStudy_allSentences');
+      localStorage.removeItem('chineseStudy_selectedLessonId');
+      localStorage.removeItem('chineseStudy_currentSentenceIndex');
+      localStorage.removeItem('chineseStudy_displayMode');
       setViewMode(null);
       setDataCategory(null);
       setSelectedType(null);
@@ -223,6 +215,7 @@ function App() {
         if (lessons.length === 1) {
           // If only one lesson, go directly to content
           setSelectedLesson(data.contents);
+          setSelectedLessonId(lessons[0].lesson); // 단일 레슨일 때도 lessonId 저장
           extractAllSentences(data.contents);
         }
       } else {
@@ -260,6 +253,7 @@ function App() {
       );
       console.log('selectedLesson 예시 3개:', lessonContent.slice(0, 3));
       setSelectedLesson(lessonContent);
+      setSelectedLessonId(lessonName); // lessonId 저장
       extractAllSentences(lessonContent);
     }
   };
@@ -303,7 +297,7 @@ function App() {
         <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
           <div className="header-with-center">
             <button onClick={goBack} className="back-btn">🔙</button>
-            <h2 className="header-title-center">새 UI</h2>
+            
             <div className="header-spacer"></div>
           </div>
           <div className="data-category-selection">
