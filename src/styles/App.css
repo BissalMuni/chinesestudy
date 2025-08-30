@@ -536,7 +536,12 @@ body {
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
   text-align: center;
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+
 }
+
+
 
 .header-spacer {
   width: 40px; /* 백 버튼과 같은 너비로 균형 맞추기 */
@@ -549,6 +554,7 @@ body {
 }
 
 .back-btn {
+  z-index: 10;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
@@ -921,8 +927,44 @@ body {
   max-height: 60vh;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  cursor: pointer;
+  padding-top: 20px;
+  transition: color 0.3s ease;
+}
+
+.main-sentence:hover {
+  color: #3498db;
+}
+
+.sentence-translations {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 10px;
+  border-left: 4px solid #3498db;
+}
+
+.translation-pinyin {
+  font-size: 1.8rem;
+  color: #e74c3c;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.translation-korean {
+  font-size: 1.5rem;
+  color: #27ae60;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.translation-english {
+  font-size: 1.4rem;
+  color: #8e44ad;
+  margin: 10px 0;
+  font-weight: 500;
 }
 
 .translations-display {

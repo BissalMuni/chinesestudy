@@ -31,6 +31,7 @@ function App() {
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState<number>(0);
   const [allSentences, setAllSentences] = useState<any[]>([]);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [showTranslations, setShowTranslations] = useState<boolean>(false);
 
   // localStorage에서 상태 복원
   useEffect(() => {
@@ -402,7 +403,22 @@ function App() {
                 <div className="sentence-content">
                   {displayMode === 'chinese' && (
                     <div className="chinese-display">
-                      <p className="main-sentence">{allSentences[currentSentenceIndex]?.sentence}</p>
+                      <p className="main-sentence" onClick={() => setShowTranslations(!showTranslations)}>
+                        {allSentences[currentSentenceIndex]?.sentence}
+                      </p>
+                      {showTranslations && (
+                        <div className="sentence-translations">
+                          {allSentences[currentSentenceIndex]?.pinyin && (
+                            <p className="translation-pinyin">{allSentences[currentSentenceIndex]?.pinyin}</p>
+                          )}
+                          {allSentences[currentSentenceIndex]?.korean && (
+                            <p className="translation-korean">{allSentences[currentSentenceIndex]?.korean}</p>
+                          )}
+                          {allSentences[currentSentenceIndex]?.english && (
+                            <p className="translation-english">{allSentences[currentSentenceIndex]?.english}</p>
+                          )}
+                        </div>
+                      )}
                       <button
                         className="tts-button-center"
                         onClick={() => playAudio(allSentences[currentSentenceIndex]?.sentence, 'chinese')}
