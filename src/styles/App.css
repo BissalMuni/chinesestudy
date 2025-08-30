@@ -780,6 +780,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 17px;
 }
 
 /* 이전 버튼 - 파란색 */
@@ -992,15 +993,20 @@ body {
 .sentence-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 20px;
   width: 100%;
   padding: 0 20px;
   margin-top: auto;
   margin-bottom: 20px;
 }
 
+.sentence-controls .control-btn {
+  flex-shrink: 0;
+}
+
 .sentence-controls .tts-button-center {
-  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 .translations-display {
