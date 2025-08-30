@@ -1,721 +1,486 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import Navigation from './components/Navigation';
-import SentenceCard from './components/SentenceCard';
-import { SentenceData, Sentence, isDateBasedContent, isCategoryContent, isDayContent, ContentSection, DayContent } from './types';
+import React, { useState, useEffect } from 'react';
 import './styles/App.css';
+import LegacyApp from './components/LegacyApp';
 
-const App: React.FC = () => {
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'recently' | 'integrated'>('home');
-  const [availableFiles, setAvailableFiles] = useState<string[]>([]);
-  const [pastMonths, setPastMonths] = useState<string[]>([]);
-  const [presentMonths, setPresentMonths] = useState<string[]>([]);
-  const [integratedFiles, setIntegratedFiles] = useState<string[]>([]);
-  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
-    return localStorage.getItem('selectedMonth') || '2025-08';
-  });
-  const [selectedDate, setSelectedDate] = useState<string>(() => {
-    return localStorage.getItem('selectedDate') || '2025-08-07';
-  });
-  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
-    return localStorage.getItem('selectedCategory') || '';
-  });
-  const [selectedSubcategory] = useState<string>(''); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [lastSelectedFolder, setLastSelectedFolder] = useState<string>(() => {
-    return localStorage.getItem('lastSelectedFolder') || '';
-  });
-  const [lastSelectedMonth, setLastSelectedMonth] = useState<string>(() => {
-    return localStorage.getItem('lastSelectedMonth') || '';
-  });
-  const [sentenceData, setSentenceData] = useState<SentenceData | null>(null);
-  const [sentences, setSentences] = useState<Sentence[]>([]);
-  const [contentSections, setContentSections] = useState<ContentSection[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('isDarkMode');
-    return saved ? JSON.parse(saved) : false;
-  });
-  const [isDateBased, setIsDateBased] = useState<boolean>(() => {
-    const saved = localStorage.getItem('isDateBased');
-    return saved ? JSON.parse(saved) : false;
-  });
+type ViewMode = 'legacy' | 'new';
+type DataCategory = 'currently' | 'integrated';
+type IntegratedType = '01_초급반_제1-10과' | '02_중급반_제11-25과' | '03_고급반_제26-40과' | '04_실전회화_제41-50과' | '05_패턴_제1-30과';
+type CurrentlyType = '202508';
+type DisplayMode = 'chinese' | 'translations' | 'others' | 'words';
 
-  // 폴더에서 데이터 로드하는 공통 함수
-  const loadDataFromFolder = useCallback(async (folder: 'past' | 'present', month: string) => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      // 폴더에서 데이터 로드 (202201.json 형식)
-      const monthCode = month.replace('-', '');
-      const response = await fetch(`/data/${folder}/${monthCode}.json`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: SentenceData = await response.json();
-      console.log(`${folder} data loaded successfully:`, data);
-      
-      if (!data || !data.contents || !Array.isArray(data.contents) || data.contents.length === 0) {
-        throw new Error('Invalid data structure');
-      }
-      
-      setSentenceData(data);
-      
-      // 새로운 JSON 구조 처리
-      const firstContent = data.contents[0];
-      if (isDayContent(firstContent)) {
-        // 새로운 구조: day와 content를 가진 형식
-        setIsDateBased(false); // 카테고리 기반으로 처리
-        localStorage.setItem('isDateBased', JSON.stringify(false));
-        
-        // 사용 가능한 날짜들 설정
-        const days = data.contents
-          .filter((content: any) => content.day)
-          .map((content: any) => content.day);
-        
-        if (days.length > 0) {
-          setSelectedMonth(month);
-          localStorage.setItem('selectedMonth', month);
-          
-          // 첫 번째 날짜 선택
-          const firstDay = days[0];
-          const dateStr = `${month}-${String(firstDay).padStart(2, '0')}`;
-          setSelectedDate(dateStr);
-          localStorage.setItem('selectedDate', dateStr);
-          
-          // 첫 번째 날짜의 데이터로 초기화
-          const firstDayContent = data.contents[0];
-          if (isDayContent(firstDayContent) && firstDayContent.content && firstDayContent.content.length > 0) {
-            const savedCategory = localStorage.getItem('selectedCategory') || '전체';
-            setSelectedCategory(savedCategory);
-            localStorage.setItem('selectedCategory', savedCategory);
-          }
-        }
-      } else if (isDateBasedContent(firstContent)) {
-        // 기존 날짜 기반 구조
-        setIsDateBased(true);
-        localStorage.setItem('isDateBased', JSON.stringify(true));
-        setSentences(firstContent.sentences);
-        const actualDates = data.contents
-          .filter(isDateBasedContent)
-          .map(content => content.date);
-        setAvailableFiles(actualDates);
-        if (actualDates.length > 0) {
-          setSelectedMonth(month);
-          localStorage.setItem('selectedMonth', month);
-          const savedDate = localStorage.getItem('selectedDate');
-          const dateToSelect = savedDate && actualDates.includes(savedDate) ? savedDate : actualDates[0];
-          setSelectedDate(dateToSelect);
-          localStorage.setItem('selectedDate', dateToSelect);
-        }
-      } else if (isCategoryContent(firstContent)) {
-        // 기존 카테고리 기반 구조
-        setIsDateBased(false);
-        localStorage.setItem('isDateBased', JSON.stringify(false));
-        const savedCategory = localStorage.getItem('selectedCategory') || '전체';
-        setSelectedCategory(savedCategory);
-        localStorage.setItem('selectedCategory', savedCategory);
-      }
-    } catch (err) {
-      console.error(`Error loading ${folder} data:`, err);
-      setError(err instanceof Error ? err.message : `${folder} 데이터를 불러올 수 없습니다.`);
-      setSentences([]);
-    } finally {
-      setLoading(false);
-    }
+interface LessonData {
+  id: number;
+  lesson?: string;
+  sentence?: string;
+  pinyin?: string;
+  korean?: string;
+  english?: string;
+  japanese?: string;
+  japanese_romaji?: string;
+  words?: any[];
+}
+
+function App() {
+  const [viewMode, setViewMode] = useState<ViewMode | null>(null);
+  const [dataCategory, setDataCategory] = useState<DataCategory | null>(null);
+  const [selectedType, setSelectedType] = useState<IntegratedType | CurrentlyType | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<LessonData[] | null>(null);
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('chinese');
+  const [lessonData, setLessonData] = useState<any>(null);
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState<number>(0);
+  const [allSentences, setAllSentences] = useState<any[]>([]);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  // localStorage에서 상태 복원
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('chineseStudy_darkMode');
+    const savedViewMode = localStorage.getItem('chineseStudy_viewMode');
+    const savedDataCategory = localStorage.getItem('chineseStudy_dataCategory');
+    const savedSelectedType = localStorage.getItem('chineseStudy_selectedType');
+    const savedCurrentSentenceIndex = localStorage.getItem('chineseStudy_currentSentenceIndex');
+    const savedDisplayMode = localStorage.getItem('chineseStudy_displayMode');
+
+    if (savedDarkMode) setIsDarkMode(savedDarkMode === 'true');
+    if (savedViewMode) setViewMode(savedViewMode as ViewMode);
+    if (savedDataCategory) setDataCategory(savedDataCategory as DataCategory);
+    if (savedSelectedType) setSelectedType(savedSelectedType as IntegratedType | CurrentlyType);
+    if (savedCurrentSentenceIndex) setCurrentSentenceIndex(parseInt(savedCurrentSentenceIndex));
+    if (savedDisplayMode) setDisplayMode(savedDisplayMode as DisplayMode);
   }, []);
 
-  // 특정 날짜의 컨텐츠 섹션 생성
-  const createContentSectionsForDay = useCallback((dayContent: DayContent) => {
-    const sections: ContentSection[] = [];
-    let idCounter = 1;
-    
-    if (dayContent.content) {
-      dayContent.content.forEach((categoryData: any) => {
-        // 카테고리 구분선
-        sections.push({
-          type: 'divider',
-          dividerText: categoryData.category
-        });
-        
-        categoryData.subcategories.forEach((subcategory: any) => {
-          // 서브카테고리 구분선
-          sections.push({
-            type: 'divider',
-            dividerText: subcategory.subcategory
-          });
-          
-          // 문장들
-          subcategory.sentences.forEach((sentence: any) => {
-            sections.push({
-              type: 'sentence',
-              sentence: {
-                ...sentence,
-                id: idCounter++
-              }
-            });
-          });
-        });
-      });
-    }
-    
-    return sections;
-  }, []);
-
-  // 컨텐츠 섹션 생성 (카테고리별)
-  const createContentSections = useCallback((category: string) => {
-    if (!sentenceData || !sentenceData.contents) return [];
-    
-    const sections: ContentSection[] = [];
-    let idCounter = 1;
-    
-    // 선택된 날짜의 데이터 가져오기
-    const day = parseInt(selectedDate.split('-')[2]);
-    const dayContent = sentenceData.contents.find((content): content is DayContent => isDayContent(content) && content.day === day);
-    
-    if (!dayContent || !dayContent.content) return [];
-    
-    if (category === '전체') {
-      // 전체 선택 시 해당 날짜의 모든 카테고리 표시
-      return createContentSectionsForDay(dayContent);
-    } else {
-      // 특정 카테고리 선택 시
-      const categoryData = dayContent.content.find((cat: any) => cat.category === category);
-      
-      if (categoryData) {
-        categoryData.subcategories.forEach((subcategory: any) => {
-          // 서브카테고리 구분선
-          sections.push({
-            type: 'divider',
-            dividerText: subcategory.subcategory
-          });
-          
-          // 문장들
-          subcategory.sentences.forEach((sentence: any) => {
-            sections.push({
-              type: 'sentence',
-              sentence: {
-                ...sentence,
-                id: idCounter++
-              }
-            });
-          });
-        });
-      }
-    }
-    
-    return sections;
-  }, [sentenceData, selectedDate, createContentSectionsForDay]);
-
-  // 과거 및 현재 월 목록 로드, 통합 파일 목록 로드
+  // 상태 변경시 localStorage에 저장
   useEffect(() => {
-    const loadAllMonths = async () => {
-      try {
-        // Past months 로드
-        const pastResponse = await fetch('/data/past/manifest.json');
-        if (pastResponse.ok) {
-          const pastData = await pastResponse.json();
-          const pastMonths = pastData.files.map((file: string) => {
-            const match = file.match(/(\d{4})(\d{2})\.json$/);
-            if (match) {
-              return `${match[1]}-${match[2]}`;
-            }
-            return null;
-          }).filter(Boolean);
-          
-          setPastMonths(pastMonths);
-          console.log('Past months loaded:', pastMonths);
-        }
-        
-        // Present months 로드
-        const presentResponse = await fetch('/data/present/manifest.json');
-        if (presentResponse.ok) {
-          const presentData = await presentResponse.json();
-          const presentMonths = presentData.files.map((file: string) => {
-            const match = file.match(/(\d{4})(\d{2})\.json$/);
-            if (match) {
-              return `${match[1]}-${match[2]}`;
-            }
-            return null;
-          }).filter(Boolean);
-          
-          setPresentMonths(presentMonths);
-          console.log('Present months loaded:', presentMonths);
-        }
-      } catch (err) {
-        console.error('Error loading months:', err);
-      }
-    };
-    
-    const loadIntegratedFiles = () => {
-      // 통합 폴더의 파일 목록 (수동으로 설정)
-      const files = [
-        '01_초급반_제1-10과.txt',
-        '02_중급반_제11-25과.txt', 
-        '03_고급반_제26-40과.txt',
-        '04_실전회화_제41-50과.txt',
-        '05_패턴.txt',
-        '05_패턴_제1-90과.txt',
-        'reorganized_chinese_materials.txt',
-        '패런_원본.txt'
-      ];
-      setIntegratedFiles(files);
-      console.log('Integrated files loaded:', files);
-    };
-    
-    loadAllMonths();
-    loadIntegratedFiles();
-  }, []);
+    localStorage.setItem('chineseStudy_darkMode', isDarkMode.toString());
+  }, [isDarkMode]);
 
-  // 통합 파일 로드 함수
-  const loadIntegratedFile = useCallback(async (fileName: string) => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      // txt 파일을 import로 불러올 수 없으므로 임시로 빈 데이터 설정
-      console.log('Loading integrated file:', fileName);
-      
-      // TODO: 실제 파일 로딩 로직 구현 필요
-      // 임시로 빈 SentenceData 객체 생성
-      const mockData: SentenceData = {
-        month: '통합',
-        language: '중국어',
-        contents: []
-      };
-      
-      setSentenceData(mockData);
-      setIsDateBased(false);
-      localStorage.setItem('isDateBased', JSON.stringify(false));
-      
-      // 임시 문장 데이터 (실제 파일 파싱 후 교체 예정)
-      const mockSentences: Sentence[] = [
-        {
-          id: 1,
-          sentence: '你好',
-          'meaning-korean': '안녕하세요',
-          'meaning-english': 'Hello',
-          pinyin: 'nǐ hào',
-          words: [
-            {
-              chinese: '你好',
-              pinyin: 'nǐ hào',
-              korean: '안녕하세요',
-              english: 'hello',
-              type: 'greeting'
-            }
-          ]
-        }
-      ];
-      
-      setSentences(mockSentences);
-      setContentSections([]);
-      
-    } catch (err) {
-      console.error('Error loading integrated file:', err);
-      setError(err instanceof Error ? err.message : '통합 파일을 불러올 수 없습니다.');
-      setSentences([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // 페이지 로드 시 저장된 상태 복원
   useEffect(() => {
-    const loadSavedState = async () => {
-      const savedFolder = localStorage.getItem('lastSelectedFolder');
-      const savedMonth = localStorage.getItem('lastSelectedMonth');
-      
-      if (savedFolder && savedMonth && (savedFolder === 'past' || savedFolder === 'present')) {
-        try {
-          console.log('Restoring saved state:', savedFolder, savedMonth);
-          await loadDataFromFolder(savedFolder, savedMonth);
-        } catch (error) {
-          console.error('Error restoring saved state:', error);
-        }
-      }
-    };
-    
-    loadSavedState();
-  }, [loadDataFromFolder]);
+    if (viewMode) localStorage.setItem('chineseStudy_viewMode', viewMode);
+  }, [viewMode]);
 
-  // 날짜 기반 데이터일 때 저장된 날짜로 복원
   useEffect(() => {
-    if (sentenceData && isDateBased && selectedDate) {
-      const selectedDateData = sentenceData.contents
-        .filter(isDateBasedContent)
-        .find(content => content.date === selectedDate);
-      if (selectedDateData) {
-        setSentences(selectedDateData.sentences);
-      }
-    }
-  }, [sentenceData, isDateBased, selectedDate]);
+    if (dataCategory) localStorage.setItem('chineseStudy_dataCategory', dataCategory);
+  }, [dataCategory]);
 
-  // 카테고리 기반 데이터일 때 컨텐츠 섹션 설정
   useEffect(() => {
-    if (sentenceData && !isDateBased && selectedCategory) {
-      const sections = createContentSections(selectedCategory);
-      setContentSections(sections);
-      
-      const sentencesOnly = sections
-        .filter(section => section.type === 'sentence')
-        .map(section => section.sentence!)
-        .filter(Boolean);
-      setSentences(sentencesOnly);
-    }
-  }, [sentenceData, isDateBased, selectedCategory, createContentSections]);
+    if (selectedType) localStorage.setItem('chineseStudy_selectedType', selectedType);
+  }, [selectedType]);
 
+  useEffect(() => {
+    localStorage.setItem('chineseStudy_currentSentenceIndex', currentSentenceIndex.toString());
+  }, [currentSentenceIndex]);
 
-  // 월 변경 핸들러
-  const handleMonthChange = (month: string) => {
-    console.log('Month changed to:', month);
-    setSelectedMonth(month);
-    localStorage.setItem('selectedMonth', month);
-    
-    // 해당 월의 첫 번째 날짜 선택
-    const monthDates = availableFiles.filter(date => date.startsWith(month));
-    if (monthDates.length > 0) {
-      setSelectedDate(monthDates[0]);
-      localStorage.setItem('selectedDate', monthDates[0]);
-      // 여기서 새로운 데이터를 로드해야 함 (현재는 2025-08만 있음)
-    }
-  };
+  useEffect(() => {
+    localStorage.setItem('chineseStudy_displayMode', displayMode);
+  }, [displayMode]);
 
-  // 과거 월 선택 핸들러
-  const handlePastMonthChange = async (month: string) => {
-    console.log('Past month selected:', month);
-    localStorage.setItem('lastSelectedFolder', 'past');
-    localStorage.setItem('lastSelectedMonth', month);
-    setLastSelectedFolder('past');
-    setLastSelectedMonth(month);
-    await loadDataFromFolder('past', month);
-    setCurrentScreen('recently'); // Stay on recently screen to show study interface
-  };
-  
-  // 현재 월 선택 핸들러
-  const handlePresentMonthChange = async (month: string) => {
-    console.log('Present month selected:', month);
-    localStorage.setItem('lastSelectedFolder', 'present');
-    localStorage.setItem('lastSelectedMonth', month);
-    setLastSelectedFolder('present');
-    setLastSelectedMonth(month);
-    await loadDataFromFolder('present', month);
-    setCurrentScreen('recently'); // Stay on recently screen to show study interface
-  };
-
-  // 카테고리 변경 핸들러
-  const handleCategoryChange = (category: string) => {
-    console.log('Category changed to:', category);
-    setSelectedCategory(category);
-    localStorage.setItem('selectedCategory', category);
-    
-    // 컨텐츠 섹션 생성 (서브카테고리 구분선 포함)
-    const sections = createContentSections(category);
-    setContentSections(sections);
-    
-    // 기존 sentences도 업데이트 (호환성을 위해 유지)
-    const sentencesOnly = sections
-      .filter(section => section.type === 'sentence')
-      .map(section => section.sentence!)
-      .filter(Boolean);
-    setSentences(sentencesOnly);
-  };
-
-
-  // 날짜 변경 핸들러 (새로운 JSON 구조 지원)
-  const handleDateChange = (date: string) => {
-    console.log('Date changed to:', date);
-    setSelectedDate(date);
-    localStorage.setItem('selectedDate', date);
-    
-    // 새로운 JSON 구조에서 day로 데이터 찾기
-    if (sentenceData && sentenceData.contents) {
-      const day = parseInt(date.split('-')[2]);
-      const dayContent = sentenceData.contents.find((content): content is DayContent => isDayContent(content) && content.day === day);
-      
-      if (dayContent && dayContent.content) {
-        // 첫 번째 카테고리를 기본으로 선택
-        const firstCategory = dayContent.content[0]?.category || '전체';
-        setSelectedCategory(firstCategory);
-        localStorage.setItem('selectedCategory', firstCategory);
-        
-        // 해당 날짜의 모든 문장을 contentSections로 설정
-        const sections = createContentSectionsForDay(dayContent);
-        setContentSections(sections);
-        
-        const sentencesOnly = sections
-          .filter(section => section.type === 'sentence')
-          .map(section => section.sentence!)
-          .filter(Boolean);
-        setSentences(sentencesOnly);
-      } else {
-        console.log('No data found for day:', day);
-        setSentences([]);
-        setContentSections([]);
-      }
-    }
-  };
-
-
-  // 다크 모드 토글
   const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    localStorage.setItem('isDarkMode', JSON.stringify(newMode));
+    setIsDarkMode(!isDarkMode);
   };
 
-  if (loading) {
-    return (
-      <div className="app">
-        <div className="loading">데이터를 불러오는 중...</div>
-      </div>
-    );
-  }
+  // TTS 기능
+  const playAudio = async (text: string, lang?: string) => {
+    try {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
 
-  if (error) {
-    return (
-      <div className="app">
-        <div className="error-message">
-          오류: {error}
-        </div>
-      </div>
-    );
-  }
+        // 언어별 설정
+        if (lang === 'chinese') {
+          utterance.lang = 'zh-CN';
+        } else if (lang === 'korean') {
+          utterance.lang = 'ko-KR';
+        } else if (lang === 'english') {
+          utterance.lang = 'en-US';
+        } else if (lang === 'japanese') {
+          utterance.lang = 'ja-JP';
+        } else {
+          utterance.lang = 'zh-CN'; // 기본값
+        }
 
-  // 홈 화면 렌더링
-  const renderHomeScreen = () => (
-    <div className="home-screen">
-      <header className="app-header">
-        <h1 className="app-title">中文学习</h1>
-        <button 
-          className="dark-mode-toggle"
-          onClick={toggleDarkMode}
-          aria-label="다크 모드 토글"
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
-      </header>
-      
-      <main className="main-content">
-        <div className="home-buttons">
-          <button 
-            className="data-source-button recently-button"
-            onClick={() => setCurrentScreen('recently')}
-          >
-            Recently
-            <span className="button-description">최근 학습 데이터</span>
-          </button>
-          
-          <button 
-            className="data-source-button integrated-button"
-            onClick={() => setCurrentScreen('integrated')}
-          >
-            Integrated  
-            <span className="button-description">통합 학습 데이터</span>
-          </button>
-        </div>
-      </main>
-    </div>
-  );
-
-  // Recently 화면 렌더링
-  const renderRecentlyScreen = () => (
-    <div className="file-selection-screen">
-      <header className="app-header">
-        <button 
-          className="back-button"
-          onClick={() => setCurrentScreen('home')}
-        >
-          ← Back
-        </button>
-        <h1 className="app-title">Recently Files</h1>
-        <button 
-          className="dark-mode-toggle"
-          onClick={toggleDarkMode}
-          aria-label="다크 모드 토글"
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
-      </header>
-      
-      <main className="main-content">
-        <div className="file-grid">
-          <div className="file-category">
-            <h2>Past Data</h2>
-            <div className="file-buttons">
-              {pastMonths.map((month) => (
-                <button
-                  key={month}
-                  className="file-button"
-                  onClick={() => handlePastMonthChange(month)}
-                >
-                  {month}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="file-category">
-            <h2>Present Data</h2>
-            <div className="file-buttons">
-              {presentMonths.map((month) => (
-                <button
-                  key={month}
-                  className="file-button"
-                  onClick={() => handlePresentMonthChange(month)}
-                >
-                  {month}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-
-  // Integrated 화면 렌더링
-  const renderIntegratedScreen = () => (
-    <div className="file-selection-screen">
-      <header className="app-header">
-        <button 
-          className="back-button"
-          onClick={() => setCurrentScreen('home')}
-        >
-          ← Back
-        </button>
-        <h1 className="app-title">Integrated Files</h1>
-        <button 
-          className="dark-mode-toggle"
-          onClick={toggleDarkMode}
-          aria-label="다크 모드 토글"
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
-      </header>
-      
-      <main className="main-content">
-        <div className="file-grid">
-          <div className="file-category">
-            <h2>통합 학습 자료</h2>
-            <div className="file-buttons">
-              {integratedFiles.map((file) => (
-                <button
-                  key={file}
-                  className="file-button"
-                  onClick={() => loadIntegratedFile(file)}
-                >
-                  {file.replace('.txt', '').replace(/^\d+_/, '')}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-
-  // 학습 화면 렌더링
-  const renderStudyScreen = () => (
-    <div className="study-screen">
-      <header className="app-header">
-        <button 
-          className="back-button"
-          onClick={() => setCurrentScreen(lastSelectedFolder === 'past' || lastSelectedFolder === 'present' ? 'recently' : 'home')}
-        >
-          ← Back
-        </button>
-        <h1 className="app-title">中文学习</h1>
-        <button 
-          className="dark-mode-toggle"
-          onClick={toggleDarkMode}
-          aria-label="다크 모드 토글"
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
-      </header>
-      
-      <Navigation
-        availableDates={availableFiles}
-        pastMonths={pastMonths}
-        presentMonths={presentMonths}
-        selectedMonth={selectedMonth}
-        selectedDate={selectedDate}
-        selectedCategory={selectedCategory}
-        sentenceData={sentenceData}
-        lastSelectedFolder={lastSelectedFolder}
-        lastSelectedMonth={lastSelectedMonth}
-        onMonthChange={handleMonthChange}
-        onDateChange={handleDateChange}
-        onCategoryChange={handleCategoryChange}
-        onPastMonthChange={handlePastMonthChange}
-        onPresentMonthChange={handlePresentMonthChange}
-      />
-      
-      <main className="main-content">
-        <div className="sentences-container">
-          {!isDateBased && contentSections.length > 0 ? (
-            // 카테고리 기반 렌더링 (서브카테고리 구분선 포함)
-            contentSections.map((section, index) => (
-              section.type === 'divider' ? (
-                <div key={`divider-${index}`} className="subcategory-divider">
-                  <h3>{section.dividerText}</h3>
-                </div>
-              ) : (
-                <SentenceCard
-                  key={`sentence-${section.sentence?.id || index}`}
-                  sentence={section.sentence!}
-                />
-              )
-            ))
-          ) : (
-            // 날짜 기반 렌더링 또는 빈 상태
-            sentences.length > 0 ? (
-              sentences.map((sentence) => (
-                <SentenceCard
-                  key={sentence.id}
-                  sentence={sentence}
-                />
-              ))
-            ) : (
-              <div className="no-data">
-                <p>표시할 문장이 없습니다.</p>
-                <p>날짜 또는 카테고리를 선택해주세요.</p>
-              </div>
-            )
-          )}
-        </div>
-      </main>
-    </div>
-  );
-
-  // 현재 화면에 따라 적절한 컴포넌트 렌더링
-  const renderCurrentScreen = () => {
-    if (currentScreen === 'home') {
-      return renderHomeScreen();
-    } else if (currentScreen === 'recently') {
-      // Recently 화면에서 데이터가 로드되면 study 화면 표시
-      if (sentenceData) {
-        return renderStudyScreen();
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+        return;
       }
-      return renderRecentlyScreen();
-    } else if (currentScreen === 'integrated') {
-      // Integrated 화면에서 데이터가 로드되면 study 화면 표시
-      if (sentenceData) {
-        return renderStudyScreen();
-      }
-      return renderIntegratedScreen();
+    } catch (error) {
+      console.error('Audio playback error:', error);
     }
-    return renderHomeScreen();
   };
 
-  return (
-    <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
-      {renderCurrentScreen()}
-    </div>
-  );
-};
+  const goBack = () => {
+    if (selectedLesson) {
+      setSelectedLesson(null);
+      setDisplayMode('chinese');
+    } else if (selectedType) {
+      setSelectedType(null);
+    } else if (dataCategory) {
+      setDataCategory(null);
+    } else if (viewMode) {
+      setViewMode(null);
+    }
+  };
+
+  const loadLessonData = async (type: IntegratedType | CurrentlyType) => {
+    try {
+      let url;
+      if (type === '05_패턴_제1-30과') {
+        url = `/data/integrated/${type}_complete.json`;
+      } else if (type === '202508') {
+        url = `/data/currently/${type}.json`;
+      } else {
+        url = `/data/integrated/${type}.json`;
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+      setLessonData(data);
+
+      // Extract unique lessons for lesson selection
+      if (data.contents && Array.isArray(data.contents)) {
+        const lessons = data.contents.reduce((acc: any[], item: any) => {
+          const lessonNum = item.lesson || `Lesson ${item.lesson || item.id}`;
+          if (!acc.find(l => l.lesson === lessonNum)) {
+            acc.push({ lesson: lessonNum, id: item.lesson || item.id });
+          }
+          return acc;
+        }, []);
+
+        if (lessons.length === 1) {
+          // If only one lesson, go directly to content
+          setSelectedLesson(data.contents);
+          extractAllSentences(data.contents);
+        }
+      } else {
+        // If no contents array, treat the whole data as lesson content
+        setSelectedLesson([data]);
+      }
+    } catch (error) {
+      console.error('Failed to load lesson data:', error);
+    }
+  };
+
+  const extractAllSentences = (contents: any[]) => {
+    const sentences: any[] = [];
+    contents.forEach((lessonItem: any) => {
+      if (lessonItem.content) {
+        lessonItem.content.forEach((categoryItem: any) => {
+          if (categoryItem.subcategories) {
+            categoryItem.subcategories.forEach((subcat: any) => {
+              if (subcat.sentences) {
+                sentences.push(...subcat.sentences);
+              }
+            });
+          }
+        });
+      }
+    });
+    setAllSentences(sentences);
+    setCurrentSentenceIndex(0);
+  };
+
+  const selectLesson = (lessonName: string) => {
+    if (lessonData && lessonData.contents) {
+      const lessonContent = lessonData.contents.filter((item: any) =>
+        item.lesson === lessonName || `Lesson ${item.lesson || item.id}` === lessonName
+      );
+      console.log('selectedLesson 예시 3개:', lessonContent.slice(0, 3));
+      setSelectedLesson(lessonContent);
+      extractAllSentences(lessonContent);
+    }
+  };
+
+  // Initial view mode selection
+  if (!viewMode) {
+    return (
+      <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+        <button
+          className="theme-toggle-top"
+          onClick={toggleDarkMode}
+          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+        <div className="view-mode-selection">
+          <h1>중국어 학습</h1>
+          <div className="view-mode-buttons">
+            <button onClick={() => setViewMode('legacy')} className="view-mode-btn">
+              Past/Present
+            </button>
+            <button onClick={() => setViewMode('new')} className="view-mode-btn">
+              Currently/Integrated
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Legacy UI (기존 UI 그대로 유지)
+  if (viewMode === 'legacy') {
+    return <LegacyApp onBackClick={goBack} isDarkMode={isDarkMode} />;
+  }
+
+  // New UI
+  if (viewMode === 'new') {
+    // Data category selection
+    if (!dataCategory) {
+      return (
+        <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+          <div className="header-with-center">
+            <button onClick={goBack} className="back-btn">🔙</button>
+            <h2 className="header-title-center">새 UI</h2>
+            <div className="header-spacer"></div>
+          </div>
+          <div className="data-category-selection">
+            <button onClick={() => setDataCategory('currently')} className="category-btn">
+              Currently
+            </button>
+            <button onClick={() => setDataCategory('integrated')} className="category-btn">
+              Integrated
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Type selection
+    if (!selectedType) {
+      return (
+        <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+          <div className="header-with-center">
+            <button onClick={goBack} className="back-btn">🔙</button>
+            <h2 className="header-title-center">{dataCategory === 'currently' ? 'Currently' : 'Integrated'}</h2>
+            <div className="header-spacer"></div>
+          </div>
+          <div className="type-selection">
+            {dataCategory === 'integrated' ? (
+              <>
+                <button onClick={() => { setSelectedType('01_초급반_제1-10과'); loadLessonData('01_초급반_제1-10과'); }} className="type-btn">초급반 (제1-10과)</button>
+                <button onClick={() => { setSelectedType('02_중급반_제11-25과'); loadLessonData('02_중급반_제11-25과'); }} className="type-btn">중급반 (제11-25과)</button>
+                <button onClick={() => { setSelectedType('03_고급반_제26-40과'); loadLessonData('03_고급반_제26-40과'); }} className="type-btn">고급반 (제26-40과)</button>
+                <button onClick={() => { setSelectedType('04_실전회화_제41-50과'); loadLessonData('04_실전회화_제41-50과'); }} className="type-btn">실전회화 (제41-50과)</button>
+                <button onClick={() => { setSelectedType('05_패턴_제1-30과'); loadLessonData('05_패턴_제1-30과'); }} className="type-btn">패턴회화 (제1-30과)</button>
+              </>
+            ) : (
+              <button onClick={() => { setSelectedType('202508'); loadLessonData('202508' as any); }} className="type-btn">202508</button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Lesson selection (if multiple lessons exist)
+    if (selectedType && !selectedLesson && lessonData && lessonData.contents) {
+      const lessons = lessonData.contents.reduce((acc: any[], item: any) => {
+        const lessonNum = item.lesson || `Lesson ${item.lesson || item.id}`;
+        const category = item.content?.[0]?.category || '';
+        if (!acc.find(l => l.lesson === lessonNum)) {
+          acc.push({
+            lesson: lessonNum,
+            id: item.lesson || item.id,
+            category: category
+          });
+        }
+        return acc;
+      }, []);
+
+      if (lessons.length > 1) {
+        return (
+          <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+            <div className="header-with-center">
+              <button onClick={goBack} className="back-btn">🔙</button>
+              <h2 className="header-title-center">레슨 선택</h2>
+              <div className="header-spacer"></div>
+            </div>
+            <div className="lesson-selection">
+              {lessons.map((lesson: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => selectLesson(lesson.lesson)}
+                  className="lesson-btn"
+                >
+                  <div className="lesson-btn-content">
+
+                    <span className="lesson-category">{lesson.category}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    // Content display
+    if (selectedLesson) {
+      return (
+        <div className={`app full-height ${isDarkMode ? 'dark-mode' : ''}`}>
+          <div className="header-with-center">
+            <button onClick={goBack} className="back-btn">🔙</button>
+            <h2 className="header-title-center">{selectedLesson?.[0]?.lesson ? `${(selectedLesson[0] as any)?.content?.[0]?.category}` : selectedType}</h2>
+            <div className="header-spacer"></div>
+          </div>
+
+          {/* Content area - 90% */}
+          <div className="content-area">
+            {allSentences.length > 0 && (
+              <div className="single-sentence-view">
+                <div className="sentence-header">
+                  <span className="sentence-id">ID: {allSentences[currentSentenceIndex]?.id}</span>
+                  <span className="sentence-counter">{currentSentenceIndex + 1} / {allSentences.length}</span>
+                </div>
+
+                <div className="sentence-content">
+                  {displayMode === 'chinese' && (
+                    <div className="chinese-display">
+                      <p className="main-sentence">{allSentences[currentSentenceIndex]?.sentence}</p>
+                      <button
+                        className="tts-button-center"
+                        onClick={() => playAudio(allSentences[currentSentenceIndex]?.sentence, 'chinese')}
+                        title="중국어 음성 재생"
+                      >
+                        🔊
+                      </button>
+                    </div>
+                  )}
+
+                  {displayMode === 'translations' && (
+                    <div className="translations-display">
+                      <div className="translation-item">
+                        <span className="content">{allSentences[currentSentenceIndex]?.sentence}</span>
+                        <button
+                          className="tts-button-inline"
+                          onClick={() => playAudio(allSentences[currentSentenceIndex]?.sentence, 'chinese')}
+                          title="중국어 음성 재생"
+                        >
+                          🔊
+                        </button>
+                      </div>
+                      <div className="translation-item">
+                        <span className="content">{allSentences[currentSentenceIndex]?.pinyin}</span>
+                      </div>
+                      <div className="translation-item">
+                        <span className="content">{allSentences[currentSentenceIndex]?.korean}</span>
+                        <button
+                          className="tts-button-inline"
+                          onClick={() => playAudio(allSentences[currentSentenceIndex]?.korean, 'korean')}
+                          title="한국어 음성 재생"
+                        >
+                          🔊
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {displayMode === 'others' && (
+                    <div className="translations-display">
+                      <div className="translation-item">
+                        <span className="content">{allSentences[currentSentenceIndex]?.english}</span>
+                        <button
+                          className="tts-button-inline"
+                          onClick={() => playAudio(allSentences[currentSentenceIndex]?.english, 'english')}
+                          title="영어 음성 재생"
+                        >
+                          🔊
+                        </button>
+                      </div>
+                      <div className="translation-item">
+                        <span className="content">{allSentences[currentSentenceIndex]?.japanese}</span>
+                        <button
+                          className="tts-button-inline"
+                          onClick={() => playAudio(allSentences[currentSentenceIndex]?.japanese, 'japanese')}
+                          title="일본어 음성 재생"
+                        >
+                          🔊
+                        </button>
+                      </div>
+                      <div className="translation-item">
+                        <span className="content">{allSentences[currentSentenceIndex]?.japanese_romaji}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {displayMode === 'words' && (
+                    <div className="words-display">
+                      {allSentences[currentSentenceIndex]?.words && allSentences[currentSentenceIndex].words.words ?
+                        allSentences[currentSentenceIndex].words.words.map((word: any, wIndex: number) => (
+                          <div key={wIndex} className="word-item-detail">
+                            <div className="word-row-main">
+                              <div className="word-chinese">
+                                {word}
+                                <button
+                                  className="tts-button-word"
+                                  onClick={() => playAudio(word, 'chinese')}
+                                  title="단어 음성 재생"
+                                >
+                                  🔊
+                                </button>
+                              </div>
+                              <div className="word-pinyin">{allSentences[currentSentenceIndex].words.pinyin?.[wIndex]}</div>
+                              <div className="word-korean">{allSentences[currentSentenceIndex].words.korean?.[wIndex]}</div>
+                            </div>
+                            <div className="word-row-sub">
+                              <div className="word-traditional">{allSentences[currentSentenceIndex].words.traditional?.[wIndex]}</div>
+                              <div className="word-meaning">{allSentences[currentSentenceIndex].words.meaning_and_reading?.[wIndex]}</div>
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="no-words">이 문장에는 단어 정보가 없습니다.</div>
+                        )
+                      }
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Control buttons - 10% */}
+          <div className="control-buttons">
+            <button
+              onClick={() => setCurrentSentenceIndex(Math.max(0, currentSentenceIndex - 1))}
+              className={`control-btn ${currentSentenceIndex === 0 ? 'disabled' : ''}`}
+              disabled={currentSentenceIndex === 0}
+            >
+              ◀️
+            </button>
+            <button
+              onClick={() => setDisplayMode('chinese')}
+              className={`control-btn ${displayMode === 'chinese' ? 'active' : ''}`}
+            >
+              中
+            </button>
+            <button
+              onClick={() => setDisplayMode('translations')}
+              className={`control-btn ${displayMode === 'translations' ? 'active' : ''}`}
+            >
+              한
+            </button>
+            <button
+              onClick={() => setDisplayMode('words')}
+              className={`control-btn ${displayMode === 'words' ? 'active' : ''}`}
+            >
+              🔤
+            </button>
+            <button
+              onClick={() => setDisplayMode('others')}
+              className={`control-btn ${displayMode === 'others' ? 'active' : ''}`}
+            >
+              🌐
+            </button>
+
+            <button
+              onClick={() => setCurrentSentenceIndex(Math.min(allSentences.length - 1, currentSentenceIndex + 1))}
+              className={`control-btn ${currentSentenceIndex >= allSentences.length - 1 ? 'disabled' : ''}`}
+              disabled={currentSentenceIndex >= allSentences.length - 1}
+            >
+              ▶️
+            </button>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  return <div>Loading...</div>;
+}
 
 export default App;

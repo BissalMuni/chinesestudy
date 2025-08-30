@@ -9,7 +9,12 @@
       "Bash(python3:*)",
       "Bash(find:*)",
       "Bash(sed:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(node:*)",
+      "Bash(python:*)",
+      "Bash(move:*)",
+      "Bash(del \"D:\\Coding\\chinesestudy\\src\\data\\intergrated\\04_실전회화_제41-50과_complete_filled.json\")",
+      "Bash(pip install:*)"
     ],
     "defaultMode": "acceptEdits"
   }

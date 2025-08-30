@@ -1,0 +1,2 @@
+# Ignore txt files in public/data folder
+public/data/**/*.txt

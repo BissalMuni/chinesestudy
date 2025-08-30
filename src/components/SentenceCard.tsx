@@ -72,7 +72,7 @@ const SentenceCard: React.FC<SentenceCardProps> = ({ sentence }) => {
       </div>
       
       <div className={`sentence-details ${showDetails ? 'expanded' : ''}`}>
-        <div className="pinyin">{sentence.pinyin}</div>
+        {/* <div className="pinyin">{sentence.pinyin}</div> */}
         
         <div className="meanings">
           <div className="meaning-item">

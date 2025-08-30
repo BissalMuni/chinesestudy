@@ -74,8 +74,20 @@ const Navigation: React.FC<NavigationProps> = ({
   const categories = getCategoriesForDay();
 
   const formatMonth = (month: string) => {
-    const [year, monthNum] = month.split('-');
-    return `${year}년 ${monthNum}월`;
+    if (!month) return '';
+    
+    if (month.includes('-')) {
+      // Format: 2022-01
+      const [year, monthNum] = month.split('-');
+      return `${year}년 ${monthNum}월`;
+    } else if (month.length === 6) {
+      // Format: 202508
+      const year = month.substring(0, 4);
+      const monthNum = month.substring(4, 6);
+      return `${year}년 ${monthNum}월`;
+    }
+    
+    return month; // Return as-is if format is unexpected
   };
 
   // Auto-scroll to selected item
