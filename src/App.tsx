@@ -106,17 +106,27 @@ function App() {
     }
   }, [selectedType]);
 
+
   // Load data when selectedType exists but lessonData doesn't (for localStorage restoration)
   useEffect(() => {
-    if (selectedType && !lessonData) {
-      loadLessonData(selectedType);
-    }
+    const loadAndRestoreData = async () => {
+      if (selectedType && !lessonData) {
+        console.log('Loading lesson data for type:', selectedType);
+        await loadLessonData(selectedType);
+        console.log('Lesson data loaded successfully');
+      }
+    };
+    
+    loadAndRestoreData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedType]);
 
   // Restore lesson when lessonData is loaded and selectedLessonId exists
   useEffect(() => {
-    if (lessonData && selectedLessonId && !selectedLesson) {
+    if (lessonData && selectedLessonId) {
+      console.log('Restoring lesson:', selectedLessonId);
+      console.log('Available lessons:', lessonData.contents?.map((item: any) => item.lesson));
+      // 새로고침 후 복원 시 항상 실행 (기존: !selectedLesson 조건 제거)
       selectLesson(selectedLessonId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,9 +259,16 @@ function App() {
 
   const selectLesson = (lessonName: string) => {
     if (lessonData && lessonData.contents) {
-      const lessonContent = lessonData.contents.filter((item: any) =>
-        item.lesson === lessonName || `Lesson ${item.lesson || item.id}` === lessonName
-      );
+      console.log('Searching for lesson:', lessonName);
+      console.log('First item lesson field:', lessonData.contents[0]?.lesson);
+      
+      const lessonContent = lessonData.contents.filter((item: any) => {
+        // 숫자와 문자열 모두 비교 (타입 변환)
+        return String(item.lesson) === String(lessonName) || 
+               item.lesson === parseInt(lessonName) ||
+               `Lesson ${item.lesson || item.id}` === lessonName;
+      });
+      
       console.log('selectedLesson 예시 3개:', lessonContent.slice(0, 3));
       setSelectedLesson(lessonContent);
       setSelectedLessonId(lessonName); // lessonId 저장
