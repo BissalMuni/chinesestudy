@@ -951,7 +951,8 @@ body {
 .translation-pinyin {
   font-size: 1.6rem;
   color: #e74c3c;
-  margin: 10px 0;
+  
+  margin-bottom: 10px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -965,7 +966,8 @@ body {
 .translation-korean {
   font-size: 1.3rem;
   color: #27ae60;
-  margin: 10px 0;
+  
+  margin-bottom: 10px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -979,7 +981,8 @@ body {
 .translation-english {
   font-size: 1.3rem;
   color: #8e44ad;
-  margin: 10px 0;
+  
+  margin-bottom: 10px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
