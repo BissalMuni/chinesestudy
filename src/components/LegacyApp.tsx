@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navigation from './Navigation';
 import SentenceCard from './SentenceCard';
-import WordCard from './WordCard';
-import { SentenceData, ContentSection, isDateBasedContent, isCategoryContent, isDayContent, Sentence } from '../types';
+import { SentenceData, ContentSection, isDateBasedContent, isCategoryContent, isDayContent } from '../types';
 
 interface LegacyAppProps {
   onBackClick: () => void;
@@ -62,21 +61,21 @@ const LegacyApp: React.FC<LegacyAppProps> = ({ onBackClick, isDarkMode }) => {
       setSelectedMonth(latestMonth);
       handlePastMonthChange(latestMonth);
     }
-  }, [presentMonths, pastMonths, selectedMonth]);
+  }, [presentMonths, pastMonths, selectedMonth, handlePastMonthChange, handlePresentMonthChange]);
 
-  const handlePastMonthChange = async (month: string) => {
+  const handlePastMonthChange = useCallback(async (month: string) => {
     await loadMonthData(month, 'past');
     setLastSelectedFolder('past');
     setLastSelectedMonth(month);
-  };
+  }, [loadMonthData]);
 
-  const handlePresentMonthChange = async (month: string) => {
+  const handlePresentMonthChange = useCallback(async (month: string) => {
     await loadMonthData(month, 'present');
     setLastSelectedFolder('present');
     setLastSelectedMonth(month);
-  };
+  }, [loadMonthData]);
 
-  const loadMonthData = async (month: string, folder: string) => {
+  const loadMonthData = useCallback(async (month: string, folder: string) => {
     setLoading(true);
     setError(null);
     
@@ -117,7 +116,7 @@ const LegacyApp: React.FC<LegacyAppProps> = ({ onBackClick, isDarkMode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleMonthChange = (month: string) => {
     if (pastMonths.includes(month)) {
