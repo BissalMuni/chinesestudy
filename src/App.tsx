@@ -201,9 +201,7 @@ function App() {
   const loadLessonData = async (type: IntegratedType | CurrentlyType) => {
     try {
       let url;
-      if (type === '05_패턴_제1-30과') {
-        url = `/data/integrated/${type}_complete.json`;
-      } else if (type === '202508') {
+      if (type === '202508') {
         url = `/data/currently/${type}.json`;
       } else {
         url = `/data/integrated/${type}.json`;
