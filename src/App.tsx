@@ -4,7 +4,7 @@ import LegacyApp from './components/LegacyApp';
 
 type ViewMode = 'legacy' | 'new';
 type DataCategory = 'currently' | 'integrated';
-type IntegratedType = '01_초급반_제1-10과' | '02_중급반_제11-25과' | '03_고급반_제26-40과' | '04_실전회화_제41-50과' | '05_패턴_제1-30과';
+type IntegratedType = '01_초급반_제1-10과' | '02_중급반_제11-25과' | '03_고급반_제26-40과' | '04_실전회화_제41-50과' | '05_패턴_제1-90과';
 type CurrentlyType = '202508';
 type DisplayMode = 'chinese' | 'translations' | 'others' | 'words';
 
@@ -344,7 +344,7 @@ function App() {
                 <button onClick={() => { setSelectedType('02_중급반_제11-25과'); loadLessonData('02_중급반_제11-25과'); }} className="type-btn">중급반 (제11-25과)</button>
                 <button onClick={() => { setSelectedType('03_고급반_제26-40과'); loadLessonData('03_고급반_제26-40과'); }} className="type-btn">고급반 (제26-40과)</button>
                 <button onClick={() => { setSelectedType('04_실전회화_제41-50과'); loadLessonData('04_실전회화_제41-50과'); }} className="type-btn">실전회화 (제41-50과)</button>
-                <button onClick={() => { setSelectedType('05_패턴_제1-30과'); loadLessonData('05_패턴_제1-30과'); }} className="type-btn">패턴회화 (제1-30과)</button>
+                <button onClick={() => { setSelectedType('05_패턴_제1-90과'); loadLessonData('05_패턴_제1-90과'); }} className="type-btn">패턴회화 (제1-30과)</button>
               </>
             ) : (
               <button onClick={() => { setSelectedType('202508'); loadLessonData('202508' as any); }} className="type-btn">202508</button>
